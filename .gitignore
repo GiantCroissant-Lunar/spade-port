@@ -1,0 +1,6 @@
+ref-projects/
+bin/
+obj/
+.vs/
+*.user
+*.suo
