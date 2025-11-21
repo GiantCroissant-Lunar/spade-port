@@ -1,0 +1,11 @@
+Spade.Advanced: clipped Voronoi and centroidal relaxation
+
+- Add Spade.Advanced extension library with Voronoi helpers:
+  - ClipPolygon, ClippedVoronoiCell, ClippedVoronoiDiagram
+  - ClippedVoronoiBuilder for clipping Voronoi cells to a convex convex domain
+  - CentroidalVoronoiRelaxation.RelaxPoints helper for Lloyd-style smoothing
+- Add advanced tests for clipped Voronoi and centroidal relaxation
+- Wire Spade.Tests to reference Spade.Advanced
+- Document clipped Voronoi usage in USAGE.md
+- Add RFC-008, RFC-009, RFC-010 to describe advanced Voronoi, validation with Julia, and extensions project structure
+- Update RFC-006 / RFC-007 and core Spade types (DCEL, LineIntersectionIterator, TriangulationBase, VoronoiFace) as part of phase 5 integration / infinite loop fixes

@@ -105,3 +105,39 @@ public struct MyVertex : IHasPosition<double>
 
 var tri = new DelaunayTriangulation<MyVertex, ...>();
 ```
+
+### Clipped Voronoi Diagram (Spade.Advanced)
+
+The `Spade.Advanced` package provides higher-level operations built on top of the core Spade triangulation, such as **clipped Voronoi diagrams**.
+
+```csharp
+using Spade;
+using Spade.Primitives;
+using Spade.Advanced.Voronoi;
+
+// Create a basic triangulation
+var triangulation = new DelaunayTriangulation<Point2<double>, int, int, int, LastUsedVertexHintGenerator<double>>();
+triangulation.Insert(new Point2<double>(0, 0));
+triangulation.Insert(new Point2<double>(2, 0));
+triangulation.Insert(new Point2<double>(0, 2));
+triangulation.Insert(new Point2<double>(2, 2));
+
+// Define a convex clipping domain (e.g., map bounds)
+var clipDomain = new ClipPolygon(new[]
+{
+    new Point2<double>(-10, -10),
+    new Point2<double>(10, -10),
+    new Point2<double>(10, 10),
+    new Point2<double>(-10, 10),
+});
+
+// Build a clipped Voronoi diagram from the triangulation
+var clipped = ClippedVoronoiBuilder.ClipToPolygon(triangulation, clipDomain);
+
+foreach (var cell in clipped.Cells)
+{
+    // cell.Generator is the original vertex data (here: Point2<double>)
+    // cell.Polygon is the clipped Voronoi cell polygon
+    Console.WriteLine($"Generator: {cell.Generator}, vertices: {cell.Polygon.Count}");
+}
+```

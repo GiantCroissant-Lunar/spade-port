@@ -255,15 +255,34 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         if (startEdge.HasValue)
         {
             var current = startEdge.Value;
+            var visitedEdges = new HashSet<int>();
+            int maxIterations = 1000; // Safety limit
+            int iterations = 0;
+
             do
             {
+                // Safety checks to prevent infinite loops
+                if (iterations++ >= maxIterations)
+                {
+                    throw new InvalidOperationException(
+                        $"Exceeded maximum iterations ({maxIterations}) while legalizing edges for vertex {newHandle.Index}. " +
+                        "This likely indicates a malformed DCEL structure.");
+                }
+
+                if (!visitedEdges.Add(current.Index))
+                {
+                    throw new InvalidOperationException(
+                        $"Detected cycle while legalizing edges for vertex {newHandle.Index} at edge {current.Index}. " +
+                        "This indicates a malformed DCEL structure.");
+                }
+
                 var edge = DirectedEdge(current);
                 if (!edge.Face().IsOuter)
                 {
                     edges.Add(edge.Next().Handle);
                 }
                 current = edge.CCW().Handle;
-            } while (current != startEdge.Value);
+            } while (current.Index != startEdge.Value.Index);
         }
 
         foreach (var edgeToLegalize in edges)
@@ -359,9 +378,14 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         var rotateCcw = e0Query.IsOnLeftSideOrOnLine;
 
         var loopCounter = NumDirectedEdges;
+        var initialEdge = e0;
         while (true)
         {
-            if (loopCounter-- == 0) throw new InvalidOperationException("Infinite loop in Locate");
+            if (loopCounter-- == 0)
+            {
+                throw new InvalidOperationException($"Infinite loop in LocateWithHintFixedCore after {NumDirectedEdges} iterations. " +
+                    $"Target: ({targetPosition.X}, {targetPosition.Y}), Start vertex: {start.Index}, Initial edge: {initialEdge.Index}, Current edge: {e0Handle.Handle.Index}");
+            }
 
             var from = e0Handle.From();
             var to = e0Handle.To();
@@ -440,9 +464,22 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         if (currentPos == position) return currentVertex;
 
         var currentMinDist = (position.Sub(currentPos)).Length2();
+        var visited = new HashSet<int>();
+        var maxIterations = NumVertices;
+        var iteration = 0;
 
         while (true)
         {
+            if (iteration++ > maxIterations)
+            {
+                throw new InvalidOperationException($"Infinite loop detected in WalkToNearestNeighbor after {maxIterations} iterations. Target: ({position.X}, {position.Y}), Current vertex: {currentVertex.Handle.Index}");
+            }
+
+            if (!visited.Add(currentVertex.Handle.Index))
+            {
+                throw new InvalidOperationException($"Cycle detected in WalkToNearestNeighbor: revisited vertex {currentVertex.Handle.Index}. Target: ({position.X}, {position.Y})");
+            }
+
             var nextCandidate = currentVertex;
             var foundBetter = false;
 
@@ -450,13 +487,32 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
             if (startEdge.HasValue)
             {
                 var currentEdge = startEdge.Value;
+                var innerVisited = new HashSet<int>();
+                int innerIterations = 0;
+                int innerMaxIterations = 1000;
+
                 do
                 {
+                    // Inner loop safety checks
+                    if (innerIterations++ >= innerMaxIterations)
+                    {
+                        throw new InvalidOperationException(
+                            $"Exceeded maximum iterations ({innerMaxIterations}) while walking neighbors of vertex {currentVertex.Handle.Index}. " +
+                            "This likely indicates a malformed DCEL structure.");
+                    }
+
+                    if (!innerVisited.Add(currentEdge.Index))
+                    {
+                        throw new InvalidOperationException(
+                            $"Detected cycle while walking neighbors of vertex {currentVertex.Handle.Index} at edge {currentEdge.Index}. " +
+                            "This indicates a malformed DCEL structure.");
+                    }
+
                     var edge = DirectedEdge(currentEdge);
                     var neighbor = edge.To();
                     var neighborPos = neighbor.Data.Position;
                     var dist = (position.Sub(neighborPos)).Length2();
-                    
+
                     if (dist < currentMinDist)
                     {
                         currentMinDist = dist;
@@ -465,7 +521,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
                     }
 
                     currentEdge = edge.CCW().Handle;
-                } while (currentEdge != startEdge.Value);
+                } while (currentEdge.Index != startEdge.Value.Index);
             }
 
             if (!foundBetter) break;

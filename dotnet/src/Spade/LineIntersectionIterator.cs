@@ -104,11 +104,30 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                 if (startEdge == null) return null;
 
                 var current = startEdge.Value;
+                var visitedEdges = new HashSet<int>();
+                int maxIterations = 1000; // Safety limit
+                int iterations = 0;
+
                 do
                 {
+                    // Safety checks to prevent infinite loops
+                    if (iterations++ >= maxIterations)
+                    {
+                        throw new InvalidOperationException(
+                            $"Exceeded maximum iterations ({maxIterations}) while finding intersection in face {onFace.Face.Index}. " +
+                            "This likely indicates a malformed DCEL structure.");
+                    }
+
+                    if (!visitedEdges.Add(current.Handle.Index))
+                    {
+                        throw new InvalidOperationException(
+                            $"Detected cycle while finding intersection in face {onFace.Face.Index} at edge {current.Handle.Index}. " +
+                            "This indicates a malformed DCEL structure.");
+                    }
+
                     var curFrom = current.From().Data.Position;
                     var curTo = current.To().Data.Position;
-                    
+
                     if (MathUtils.IntersectsEdgeNonCollinear(_lineFrom, _lineTo, curFrom, curTo))
                     {
                         if (MathUtils.SideQuery(_lineFrom, _lineTo, curFrom).IsOnLine)
@@ -122,7 +141,7 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                         return new Intersection<V, DE, UE, F>.EdgeIntersection(current.Rev());
                     }
                     current = current.Next();
-                } while (current.Handle != startEdge.Value.Handle);
+                } while (current.Handle.Index != startEdge.Value.Handle.Index);
                 return null;
 
             case PositionInTriangulation.OnVertex onVertex:

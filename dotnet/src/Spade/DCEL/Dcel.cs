@@ -60,16 +60,34 @@ public class Dcel<V, DE, UE, F>
 
         var startEdge = vertex.OutEdge.Value;
         var current = startEdge;
-        
+        var visitedEdges = new HashSet<int>();
+        int maxIterations = 1000; // Safety limit
+        int iterations = 0;
+
         do
         {
+            // Safety checks to prevent infinite loops
+            if (iterations++ >= maxIterations)
+            {
+                throw new InvalidOperationException(
+                    $"Exceeded maximum iterations ({maxIterations}) while searching for edge from vertex {from.Index} to {to.Index}. " +
+                    "This likely indicates a malformed DCEL structure.");
+            }
+
+            if (!visitedEdges.Add(current.Index))
+            {
+                throw new InvalidOperationException(
+                    $"Detected cycle while searching for edge from vertex {from.Index} to {to.Index} at edge {current.Index}. " +
+                    "This indicates a malformed DCEL structure.");
+            }
+
             var edgeHandle = DirectedEdge(current);
             if (edgeHandle.To().Handle == to)
             {
                 return edgeHandle;
             }
             current = edgeHandle.CCW().Handle;
-        } while (current != startEdge);
+        } while (current.Index != startEdge.Index);
 
         return null;
     }
