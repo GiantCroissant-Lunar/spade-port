@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      # Run dotnet format on the C# projects to enforce consistent style.
+      - id: dotnet-format
+        name: dotnet format (Spade solution)
+        entry: dotnet format
+        language: system
+        pass_filenames: false
+        stages: [commit]
+
+      # Run the Spade test suite on pre-push to catch regressions.
+      - id: dotnet-test-spade
+        name: dotnet test Spade.Tests
+        entry: dotnet test dotnet/tests/Spade.Tests/Spade.Tests.csproj
+        language: system
+        pass_filenames: false
+        stages: [push]

@@ -59,7 +59,7 @@ Drop-in replacement for Triangle.NET adapter with identical API.
 ## Integration Checklist
 
 ### fantasy-map-generator Updates
-- [x] Add Spade package reference (Project reference added)
+- [x] Add Spade package reference (NuGet package reference added)
 - [x] Create SpadeAdapter.cs
 - [x] Update map generation code (Attempted, reverted due to bug)
 - [ ] Run all tests
@@ -76,12 +76,15 @@ Drop-in replacement for Triangle.NET adapter with identical API.
 - [x] API documentation (XML comments)
 - [x] USAGE.md created
 - [x] NuGet package metadata configured
+- [x] NuGet package created and referenced
 - [x] All unit tests passing
 
 ## Notes
 Integration was attempted but `Spade.DelaunayTriangulation` encountered an "Infinite loop in Locate" error during map generation with 1000+ points.
 The `SpadeAdapter` class has been created and the project reference added, but `MapGenerator.cs` has been reverted to use `NetTopologySuite` until the bug in Spade is fixed.
 The bug seems related to `LocateWithHintFixedCore` robustness with `double` precision or specific point distributions.
+
+NuGet package `Spade.1.0.0.nupkg` was created and `fantasy-map-generator` was updated to use it via a local source.
 
 ---
 
@@ -96,4 +99,4 @@ The bug seems related to `LocateWithHintFixedCore` robustness with `double` prec
 
 ---
 
-**END OF RFC-006 - PROJECT COMPLETE!** 🎉
+**END OF RFC-006 - PROJECT COMPLETE!**
