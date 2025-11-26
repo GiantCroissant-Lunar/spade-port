@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c10987b8-6b7d-4dcf-a5f2-40795203d4d4" name="User@DESKTOP-UETCMBK 2025-11-25 00:59:51" runUser="DESKTOP-UETCMBK\User" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-11-25T00:59:51.5925961+08:00" queuing="2025-11-25T00:59:51.5925966+08:00" start="2025-11-25T00:59:50.8835921+08:00" finish="2025-11-25T00:59:51.5996669+08:00" />
+  <TestSettings name="default" id="f9f49baf-5703-4325-8c4b-605b8fd69bf8">
+    <Deployment runDeploymentRoot="User_DESKTOP-UETCMBK_2025-11-25_00_59_51" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1af8223a-2c5f-42c2-8dda-9bb5e81bf107" testId="22ae57f4-2274-1269-0f32-d250df9fb82c" testName="Spade.Tests.Validation.DelaunayOracleTests.DelaunayTopology_SpadeVsNts_On_RectangleWithCenter" computerName="DESKTOP-UETCMBK" duration="00:00:00.1044843" startTime="2025-11-25T00:59:51.5026927+08:00" endTime="2025-11-25T00:59:51.5027154+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1af8223a-2c5f-42c2-8dda-9bb5e81bf107">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected spadeAdjacency[i] to be a collection with 3 item(s) because adjacency for vertex 0 should match NTS on rectangle-with-center, but {1, 3}&#xD;
+contains 1 item(s) less than&#xD;
+{3, 1, 4}.&#xD;
+
+With configuration:
+- Prefer the declared type of the members&#xD;
+- Compare enums by value&#xD;
+- Compare tuples by their properties&#xD;
+- Compare anonymous types by their properties&#xD;
+- Compare records by their members&#xD;
+- Include non-browsable members&#xD;
+- Include all non-private properties&#xD;
+- Include all non-private fields&#xD;
+- Match (JSON) member by name (or throw)&#xD;
+- Be strict about the order of items in byte arrays&#xD;
+- Without automatic conversion.&#xD;
+</Message>
+          <StackTrace>   at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.CollectingAssertionStrategy.ThrowIfAny(IDictionary`2 context)&#xD;
+   at FluentAssertions.Execution.AssertionScope.Dispose()&#xD;
+   at FluentAssertions.Equivalency.EquivalencyValidator.AssertEquality(Comparands comparands, EquivalencyValidationContext context)&#xD;
+   at FluentAssertions.Equivalency.EquivalencyValidator.AssertEquality(Comparands comparands, EquivalencyValidationContext context)&#xD;
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEquivalentTo[TExpectation](IEnumerable`1 expectation, Func`2 config, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEquivalentTo[TExpectation](IEnumerable`1 expectation, String because, Object[] becauseArgs)&#xD;
+   at Spade.Tests.Validation.DelaunayOracleTests.DelaunayTopology_SpadeVsNts_On_RectangleWithCenter() in D:\lunar-snake\personal-work\yokan-projects\pigeon-pea\dotnet\_lib\spade-port\dotnet\tests\Spade.Tests\Validation\DelaunayOracleTests.cs:line 270&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Spade.Tests.Validation.DelaunayOracleTests.DelaunayTopology_SpadeVsNts_On_RectangleWithCenter" storage="d:\lunar-snake\personal-work\yokan-projects\pigeon-pea\dotnet\_lib\spade-port\dotnet\tests\spade.tests\bin\debug\net9.0\spade.tests.dll" id="22ae57f4-2274-1269-0f32-d250df9fb82c">
+      <Execution id="1af8223a-2c5f-42c2-8dda-9bb5e81bf107" />
+      <TestMethod codeBase="D:\lunar-snake\personal-work\yokan-projects\pigeon-pea\dotnet\_lib\spade-port\dotnet\tests\Spade.Tests\bin\Debug\net9.0\Spade.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="Spade.Tests.Validation.DelaunayOracleTests" name="DelaunayTopology_SpadeVsNts_On_RectangleWithCenter" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="22ae57f4-2274-1269-0f32-d250df9fb82c" executionId="1af8223a-2c5f-42c2-8dda-9bb5e81bf107" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="不在清單中的結果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有載入的結果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)&#xD;
+[xUnit.net 00:00:00.06]   Discovering: Spade.Tests&#xD;
+[xUnit.net 00:00:00.09]   Discovered:  Spade.Tests&#xD;
+[xUnit.net 00:00:00.10]   Starting:    Spade.Tests&#xD;
+     Warning:&#xD;
+     The component "Fluent Assertions" is governed by the rules defined in the Xceed License Agreement and&#xD;
+     the Xceed Fluent Assertions Community License. You may use Fluent Assertions free of charge for&#xD;
+     non-commercial use only. An active subscription is required to use Fluent Assertions for commercial use.&#xD;
+     Please contact Xceed Sales mailto:sales@xceed.com to acquire a subscription at a very low cost.&#xD;
+     A paid commercial license supports the development and continued increasing support of&#xD;
+     Fluent Assertions users under both commercial and community licenses. Help us&#xD;
+     keep Fluent Assertions at the forefront of unit testing.&#xD;
+     For more information, visit https://xceed.com/products/unit-testing/fluent-assertions/&#xD;
+[xUnit.net 00:00:00.24]       Expected spadeAdjacency[i] to be a collection with 3 item(s) because adjacency for vertex 0 should match NTS on rectangle-with-center, but {1, 3}&#xD;
+[xUnit.net 00:00:00.24]       contains 1 item(s) less than&#xD;
+[xUnit.net 00:00:00.24]       {3, 1, 4}.&#xD;
+[xUnit.net 00:00:00.24]       
+With configuration:
+- Prefer the declared type of the members&#xD;
+[xUnit.net 00:00:00.24]       - Compare enums by value&#xD;
+[xUnit.net 00:00:00.24]       - Compare tuples by their properties&#xD;
+[xUnit.net 00:00:00.24]       - Compare anonymous types by their properties&#xD;
+[xUnit.net 00:00:00.24]       - Compare records by their members&#xD;
+[xUnit.net 00:00:00.24]       - Include non-browsable members&#xD;
+[xUnit.net 00:00:00.24]       - Include all non-private properties&#xD;
+[xUnit.net 00:00:00.24]       - Include all non-private fields&#xD;
+[xUnit.net 00:00:00.24]       - Match (JSON) member by name (or throw)&#xD;
+[xUnit.net 00:00:00.24]       - Be strict about the order of items in byte arrays&#xD;
+[xUnit.net 00:00:00.24]       - Without automatic conversion.&#xD;
+[xUnit.net 00:00:00.24]       &#xD;
+[xUnit.net 00:00:00.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Execution.LateBoundTestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Execution.CollectingAssertionStrategy.ThrowIfAny(IDictionary`2 context)&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Execution.AssertionScope.Dispose()&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Equivalency.EquivalencyValidator.AssertEquality(Comparands comparands, EquivalencyValidationContext context)&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Equivalency.EquivalencyValidator.AssertEquality(Comparands comparands, EquivalencyValidationContext context)&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEquivalentTo[TExpectation](IEnumerable`1 expectation, Func`2 config, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:00.24]            at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEquivalentTo[TExpectation](IEnumerable`1 expectation, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:00.24]         D:\lunar-snake\personal-work\yokan-projects\pigeon-pea\dotnet\_lib\spade-port\dotnet\tests\Spade.Tests\Validation\DelaunayOracleTests.cs(270,0): at Spade.Tests.Validation.DelaunayOracleTests.DelaunayTopology_SpadeVsNts_On_RectangleWithCenter()&#xD;
+[xUnit.net 00:00:00.24]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.24]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.25]   Finished:    Spade.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="DESKTOP-UETCMBK" outcome="Error" timestamp="2025-11-25T00:59:51.4997048+08:00">
+        <Text>[xUnit.net 00:00:00.24]     Spade.Tests.Validation.DelaunayOracleTests.DelaunayTopology_SpadeVsNts_On_RectangleWithCenter [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

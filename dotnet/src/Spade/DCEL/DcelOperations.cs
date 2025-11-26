@@ -95,8 +95,8 @@ internal static class DcelOperations
         var f2 = new FixedFaceHandle(dcel.Faces.Count + 1);
 
         // Create new faces
-        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = e1, Data = new F() });
-        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = e2, Data = new F() });
+        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = e1, Data = new F(), Kind = FaceKind.Inner });
+        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = e2, Data = new F(), Kind = FaceKind.Inner });
 
         // Update vertex v
         var vertexV = dcel.Vertices[v.Index];
@@ -159,7 +159,7 @@ internal static class DcelOperations
         var edge2 = new HalfEdgeEntry { Next = edgeNext, Prev = e1, Origin = newVertexHandle, Face = nf };
         var twin2 = new HalfEdgeEntry { Next = edgeTwin, Prev = edgeTwinPrev, Face = edgeTwinFace, Origin = to };
         
-        var newFace = new FaceEntry<F> { AdjacentEdge = e2, Data = new F() };
+        var newFace = new FaceEntry<F> { AdjacentEdge = e2, Data = new F(), Kind = FaceKind.Inner };
         
         dcel.Edges.Add(new EdgeEntry<DE, UE>(edge1, twin1));
         dcel.Edges.Add(new EdgeEntry<DE, UE>(edge2, twin2));
@@ -235,8 +235,8 @@ internal static class DcelOperations
         var edge3 = new HalfEdgeEntry { Next = t2, Prev = en, Origin = v4, Face = f3 };
         var twin3 = new HalfEdgeEntry { Next = ep, Prev = e0, Origin = v0, Face = f0 };
         
-        var face2 = new FaceEntry<F> { AdjacentEdge = e2, Data = new F() };
-        var face3 = new FaceEntry<F> { AdjacentEdge = e3, Data = new F() };
+        var face2 = new FaceEntry<F> { AdjacentEdge = e2, Data = new F(), Kind = FaceKind.Inner };
+        var face3 = new FaceEntry<F> { AdjacentEdge = e3, Data = new F(), Kind = FaceKind.Inner };
         
         dcel.UpdateHalfEdge(e0, _ => edge0);
         dcel.UpdateHalfEdge(t0, _ => twin0);
@@ -413,7 +413,7 @@ internal static class DcelOperations
         dcel.Edges.Add(new EdgeEntry<DE, UE>(newNext, newNextRev));
         dcel.Edges.Add(new EdgeEntry<DE, UE>(newPrev, newPrevRev));
         
-        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = edge, Data = new F() });
+        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = edge, Data = new F(), Kind = FaceKind.Inner });
         
         var vertexNew = dcel.Vertices[newVertexHandle.Index];
         vertexNew.OutEdge = new FixedDirectedEdgeHandle(newPrevHandle.Index * 2); // Normalized
@@ -481,7 +481,7 @@ internal static class DcelOperations
         dcel.Faces[0] = outerFace;
         
         dcel.Edges.Add(new EdgeEntry<DE, UE>(innerEdgeEntry, outerEdgeEntry));
-        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = newInnerHandle, Data = new F() });
+        dcel.Faces.Add(new FaceEntry<F> { AdjacentEdge = newInnerHandle, Data = new F(), Kind = FaceKind.Inner });
         
         return newOuterHandle;
     }

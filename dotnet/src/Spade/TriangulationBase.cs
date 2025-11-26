@@ -318,8 +318,10 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
 
             var v0 = edgeHandle.From().Data.Position;
             var v1 = edgeHandle.To().Data.Position;
-            var v2 = edgeHandle.Next().To().Data.Position;
-            var v3 = revHandle.Next().To().Data.Position;
+            // v2 is opposite to the reversed edge (on the left side of the edge)
+            var v2 = revHandle.Next().To().Data.Position;
+            // v3 is opposite to the edge (on the right side of the edge)
+            var v3 = edgeHandle.Next().To().Data.Position;
 
             if (MathUtils.ContainedInCircumference(v2, v1, v0, v3))
             {
@@ -353,6 +355,74 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         return LocateWithHintFixedCore(point, start);
     }
 
+    /// <summary>
+    /// Brute force point location by checking all faces. Used for testing/validation only.
+    /// </summary>
+    protected PositionInTriangulation BruteForceLocate(Point2<double> target)
+    {
+        // Check if on a vertex
+        foreach (var vertex in Vertices())
+        {
+            if (vertex.Data.Position == target)
+            {
+                return new PositionInTriangulation.OnVertex(vertex.Handle);
+            }
+        }
+
+        // Check if on an edge
+        foreach (var edge in DirectedEdges())
+        {
+            var from = edge.From().Data.Position;
+            var to = edge.To().Data.Position;
+            
+            var sideQuery = MathUtils.SideQuery(from, to, target);
+            if (sideQuery.IsOnLine)
+            {
+                var projection = MathUtils.ProjectPoint(from, to, target);
+                if (projection.IsOnEdge)
+                {
+                    return new PositionInTriangulation.OnEdge(edge.Handle);
+                }
+            }
+        }
+
+        // Check inner faces
+        foreach (var face in InnerFaces())
+        {
+            var adjEdge = face.AdjacentEdge();
+            if (adjEdge == null) continue;
+
+            var e0 = adjEdge.Value;
+            var e1 = e0.Next();
+            var e2 = e1.Next();
+
+            var s0 = e0.SideQuery(target);
+            var s1 = e1.SideQuery(target);
+            var s2 = e2.SideQuery(target);
+
+            // Point is inside if it's on the left side (or on line) of all edges
+            if (s0.IsOnLeftSideOrOnLine && s1.IsOnLeftSideOrOnLine && s2.IsOnLeftSideOrOnLine)
+            {
+                return new PositionInTriangulation.OnFace(face.Handle);
+            }
+        }
+
+        // Check if outside convex hull - find the hull edge that has the point on its left
+        foreach (var edge in DirectedEdges())
+        {
+            if (edge.Face().IsOuter)
+            {
+                var sideQuery = edge.SideQuery(target);
+                if (sideQuery.IsOnLeftSide)
+                {
+                    return new PositionInTriangulation.OutsideOfConvexHull(edge.Handle);
+                }
+            }
+        }
+
+        return new PositionInTriangulation.NoTriangulation();
+    }
+
     private PositionInTriangulation LocateWithHintFixedCore(Point2<double> targetPosition, FixedVertexHandle start)
     {
         if (NumVertices < 2)
@@ -378,13 +448,12 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         var rotateCcw = e0Query.IsOnLeftSideOrOnLine;
 
         var loopCounter = NumDirectedEdges;
-        var initialEdge = e0;
         while (true)
         {
             if (loopCounter-- == 0)
             {
                 throw new InvalidOperationException($"Infinite loop in LocateWithHintFixedCore after {NumDirectedEdges} iterations. " +
-                    $"Target: ({targetPosition.X}, {targetPosition.Y}), Start vertex: {start.Index}, Initial edge: {initialEdge.Index}, Current edge: {e0Handle.Handle.Index}");
+                    $"Target: ({targetPosition.X}, {targetPosition.Y}), Start vertex: {start.Index}");
             }
 
             var from = e0Handle.From();
@@ -403,6 +472,11 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
 
             if (e0Query.IsOnLine)
             {
+                // Special case: the current edge is collinear with the target position.
+                // This means no segment exists that could be used to advance the rotation vertex.
+                // Instead, the algorithm changes to rotate around e0.Prev().From()
+                // Since the triangulation is not degenerate, this vertex cannot have an out edge
+                // that is collinear.
                 if (e0Handle.Face().IsOuter)
                 {
                     e0Handle = e0Handle.Rev();
