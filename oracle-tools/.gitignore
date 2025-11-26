@@ -1,1 +1,7 @@
+# Rust build artifacts
+target/
 debug/
+
+# Cache directories
+**/CACHEDIR.TAG
+**/.rustc_info.json
