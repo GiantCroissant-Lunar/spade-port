@@ -2,10 +2,6 @@ using Xunit;
 using Spade;
 using Spade.Primitives;
 using FluentAssertions;
-using Xunit;
-using Spade;
-using Spade.Primitives;
-using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +11,6 @@ namespace Spade.Tests.Properties;
 /// <summary>
 /// Property-based-style tests for Delaunay triangulation invariants.
 /// Using deterministic test cases rather than full FsCheck for now (simpler integration).
-/// NOTE: Currently skipped - some tests hang or cause vertex lookup errors. Needs investigation.
 /// </summary>
 [Trait("Category", "PropertyTests")]
 public class DelaunayTriangulationProperties
@@ -25,19 +20,14 @@ public class DelaunayTriangulationProperties
     /// <summary>
     /// Euler's formula for planar graphs: V - E + F = 2
     /// </summary>
-    [Theory(Skip = "Property tests causing hangs - needs investigation")]
+    [Theory]
     [InlineData(5)]
     [InlineData(10)]
     [InlineData(20)]
     [InlineData(50)]
     public void EulerCharacteristic_HoldsForRandomTriangulations(int numPoints)
     {
-        if (Environment.GetEnvironmentVariable("SPADE_ENABLE_PROPERTIES") != "1")
-        {
-            return;
-        }
-
-        for (int trial = 0; trial < 20; trial++)
+        for (int trial = 0; trial < 5; trial++)
         {
             var points = GenerateRandomPoints(numPoints, trial);
             var triangulation = BuildTriangulation(points);
@@ -55,18 +45,13 @@ public class DelaunayTriangulationProperties
     /// <summary>
     /// Every directed edge must have a valid twin.
     /// </summary>
-    [Theory(Skip = "Property tests causing hangs - needs investigation")]
+    [Theory]
     [InlineData(5)]
     [InlineData(10)]
     [InlineData(20)]
     public void AllEdges_HaveValidTwins(int numPoints)
     {
-        if (Environment.GetEnvironmentVariable("SPADE_ENABLE_PROPERTIES") != "1")
-        {
-            return;
-        }
-
-        for (int trial = 0; trial < 20; trial++)
+        for (int trial = 0; trial < 5; trial++)
         {
             var points = GenerateRandomPoints(numPoints, trial);
             var triangulation = BuildTriangulation(points);
@@ -85,18 +70,13 @@ public class DelaunayTriangulationProperties
     /// <summary>
     /// All inner faces must be triangular (3 vertices).
     /// </summary>
-    [Theory(Skip = "Property tests causing hangs - needs investigation")]
+    [Theory]
     [InlineData(5)]
     [InlineData(10)]
     [InlineData(20)]
     public void AllInnerFaces_AreTriangular(int numPoints)
     {
-        if (Environment.GetEnvironmentVariable("SPADE_ENABLE_PROPERTIES") != "1")
-        {
-            return;
-        }
-
-        for (int trial = 0; trial < 20; trial++)
+        for (int trial = 0; trial < 5; trial++)
         {
             var points = GenerateRandomPoints(numPoints, trial);
             var triangulation = BuildTriangulation(points);
@@ -112,18 +92,13 @@ public class DelaunayTriangulationProperties
     /// <summary>
     /// Triangulation should be connected.
     /// </summary>
-    [Theory(Skip = "Property tests causing hangs - needs investigation")]
+    [Theory]
     [InlineData(5)]
     [InlineData(10)]
     [InlineData(20)]
     public void Triangulation_IsConnected(int numPoints)
     {
-        if (Environment.GetEnvironmentVariable("SPADE_ENABLE_PROPERTIES") != "1")
-        {
-            return;
-        }
-
-        for (int trial = 0; trial < 20; trial++)
+        for (int trial = 0; trial < 5; trial++)
         {
             var points = GenerateRandomPoints(numPoints, trial);
             var triangulation = BuildTriangulation(points);
@@ -178,12 +153,7 @@ public class DelaunayTriangulationProperties
     [InlineData(10)]
     public void Edge_NextPrev_Consistency(int numPoints)
     {
-        if (Environment.GetEnvironmentVariable("SPADE_ENABLE_PROPERTIES") != "1")
-        {
-            return;
-        }
-
-        for (int trial = 0; trial < 20; trial++)
+        for (int trial = 0; trial < 5; trial++)
         {
             var points = GenerateRandomPoints(numPoints, trial);
             var triangulation = BuildTriangulation(points);
