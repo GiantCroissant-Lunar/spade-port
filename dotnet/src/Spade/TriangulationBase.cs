@@ -122,7 +122,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
             {
                 return t.Update(v0, _dcel);
             }
-            
+
             var v1 = t.IntoVertex(_dcel);
             DcelOperations.SetupInitialTwoVertices(_dcel, v0, v1);
             return v1;
@@ -159,7 +159,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     {
         var edgeHandle = DirectedEdge(edge);
         FixedDirectedEdgeHandle[] splitParts;
-        
+
         if (edgeHandle.Face().IsOuter)
         {
             var parts = DcelOperations.SplitHalfEdge(_dcel, edge.Rev(), newVertex);
@@ -194,10 +194,10 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     private FixedVertexHandle InsertOutsideOfConvexHull(FixedDirectedEdgeHandle convexHullEdge, FixedVertexHandle newVertex)
     {
         var position = Vertex(newVertex).Data.Position;
-        
+
         if (!DirectedEdge(convexHullEdge).SideQuery(position).IsOnLeftSide)
         {
-             throw new InvalidOperationException("Point must be on left side of convex hull edge");
+            throw new InvalidOperationException("Point must be on left side of convex hull edge");
         }
 
         var result = DcelOperations.CreateNewFaceAdjacentToEdge(_dcel, convexHullEdge, newVertex);
@@ -250,7 +250,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     {
         var edges = new List<FixedDirectedEdgeHandle>();
         var vertex = Vertex(newHandle);
-        
+
         var startEdge = _dcel.Vertices[newHandle.Index].OutEdge;
         if (startEdge.HasValue)
         {
@@ -305,12 +305,12 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         while (edges.Count > 0)
         {
             var e = edges.Pop();
-            
+
             if (IsConstraint(e.AsUndirected())) continue;
 
             var edgeHandle = DirectedEdge(e);
             var revHandle = edgeHandle.Rev();
-            
+
             if (edgeHandle.Face().IsOuter || revHandle.Face().IsOuter)
             {
                 continue;
@@ -326,16 +326,16 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
             if (MathUtils.ContainedInCircumference(v2, v1, v0, v3))
             {
                 result = true;
-                
+
                 edges.Push(revHandle.Next().Handle);
                 edges.Push(revHandle.Prev().Handle);
-                
+
                 if (fullyLegalize)
                 {
                     edges.Push(edgeHandle.Next().Handle);
                     edges.Push(edgeHandle.Prev().Handle);
                 }
-                
+
                 DcelOperations.FlipCw(_dcel, e.AsUndirected());
             }
         }
@@ -374,7 +374,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         {
             var from = edge.From().Data.Position;
             var to = edge.To().Data.Position;
-            
+
             var sideQuery = MathUtils.SideQuery(from, to, target);
             if (sideQuery.IsOnLine)
             {
@@ -436,7 +436,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
 
         if (AllVerticesOnLine())
         {
-             throw new NotImplementedException("LocateWhenAllVerticesOnLine not implemented yet");
+            throw new NotImplementedException("LocateWhenAllVerticesOnLine not implemented yet");
         }
 
         start = ValidateVertexHandle(start);
@@ -488,7 +488,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
             }
 
             var e1Handle = rotateCcw ? e0Handle : e0Handle.Rev();
-            
+
             if (e1Handle.Face().IsOuter)
             {
                 _hintGenerator.NotifyVertexLookup(e1Handle.From().Handle);
@@ -534,7 +534,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     {
         var currentVertex = Vertex(start);
         var currentPos = currentVertex.Data.Position;
-        
+
         if (currentPos == position) return currentVertex;
 
         var currentMinDist = (position.Sub(currentPos)).Length2();
@@ -631,14 +631,14 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     {
         var edge = DirectedEdge(new FixedDirectedEdgeHandle(0));
         var query = edge.SideQuery(position);
-        
+
         if (query.IsOnLeftSide) return PositionWhenAllVerticesOnLine.NotOnLine(edge.Handle);
         if (query.IsOnRightSide) return PositionWhenAllVerticesOnLine.NotOnLine(edge.Handle.Rev());
 
         var vertices = new List<VertexHandle<V, DE, UE, F>>();
-        for(int i=0; i<NumVertices; i++) vertices.Add(Vertex(new FixedVertexHandle(i)));
-        
-        vertices.Sort((a, b) => 
+        for (int i = 0; i < NumVertices; i++) vertices.Add(Vertex(new FixedVertexHandle(i)));
+
+        vertices.Sort((a, b) =>
         {
             var pa = a.Data.Position;
             var pb = b.Data.Position;
@@ -650,16 +650,16 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         {
             var v = vertices[i];
             var vPos = v.Data.Position;
-            
+
             if (vPos == position)
             {
                 return PositionWhenAllVerticesOnLine.OnVertex(v.Handle);
             }
-            
+
             bool isBefore;
             if (position.X != vPos.X) isBefore = position.X < vPos.X;
             else isBefore = position.Y < vPos.Y;
-            
+
             if (isBefore)
             {
                 if (i == 0)
@@ -668,14 +668,14 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
                 }
                 else
                 {
-                    var prev = vertices[i-1];
+                    var prev = vertices[i - 1];
                     var edgeHandle = GetEdgeFromNeighbors(prev.Handle, v.Handle);
                     if (edgeHandle == null) throw new InvalidOperationException("Collinear vertices not connected");
                     return PositionWhenAllVerticesOnLine.OnEdge(edgeHandle.Value.Handle);
                 }
             }
         }
-        
+
         return PositionWhenAllVerticesOnLine.ExtendingLine(vertices[vertices.Count - 1].Handle);
     }
 
@@ -732,7 +732,7 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
                 return handle;
             }
         }
-        
+
         public sealed record ExistingVertex(FixedVertexHandle Handle) : VertexToInsert
         {
             public override FixedVertexHandle IntoVertex(Dcel<V, DE, UE, F> dcel)

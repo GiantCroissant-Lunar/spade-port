@@ -92,10 +92,10 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
     {
         var result = new List<FixedDirectedEdgeHandle>();
         var conflictEdges = new List<FixedDirectedEdgeHandle>();
-        
+
         var iterator = LineIntersectionIterator<V, DE, CdtEdge<UE>, F, L>.NewFromHandles(this, from, to);
         iterator.MoveNext(); // Skip first vertex
-        
+
         while (iterator.MoveNext())
         {
             var intersection = iterator.Current;
@@ -111,24 +111,24 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
                 {
                     if (vertexConstructor == null)
                     {
-                         throw new InvalidOperationException("Constraint intersection detected and no vertex constructor provided (splitting disabled)");
+                        throw new InvalidOperationException("Constraint intersection detected and no vertex constructor provided (splitting disabled)");
                     }
-                    
+
                     // Compute intersection point
                     var p0 = edge.From().Data.Position;
                     var p1 = edge.To().Data.Position;
                     var fromPos = Vertex(from).Data.Position;
                     var toPos = Vertex(to).Data.Position;
-                    
+
                     var lineIntersection = MathUtils.GetEdgeIntersections(p0, p1, fromPos, toPos);
                     lineIntersection = MathUtils.MitigateUnderflow(lineIntersection);
-                    
+
                     var newVertex = vertexConstructor(lineIntersection);
                     var position = newVertex.Position;
-                    
+
                     // Validate split position - check if it's close to an existing vertex
                     var alternativeVertex = ValidateSplitPosition(edge, position);
-                    
+
                     FixedVertexHandle finalVertex;
                     if (alternativeVertex.HasValue)
                     {
@@ -141,18 +141,18 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
                             {
                                 edge = edge.Rev();
                             }
-                            
+
                             var prev = edge.Prev().Handle;
                             var next = edge.Next().Handle;
                             var edgeHandle = edge.Handle;
-                            
+
                             // Unmake the original constraint edge
                             UnmakeConstraintEdge(edgeHandle.AsUndirected());
-                            
+
                             // Make the two new edges constraints
                             MakeConstraintEdge(prev.AsUndirected());
                             MakeConstraintEdge(next.AsUndirected());
-                            
+
                             // Legalize the edge
                             LegalizeEdge(edgeHandle, false);
                         }
@@ -168,12 +168,12 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
                         LegalizeVertex(newVertexHandle);
                         finalVertex = newVertexHandle;
                     }
-                    
+
                     // Add constraint from current 'from' to the split vertex
                     var previousRegion = TryAddConstraint(from, finalVertex);
                     result.AddRange(previousRegion);
                     conflictEdges.Clear();
-                    
+
                     from = finalVertex;
                     // Reset iterator from the split vertex
                     iterator = LineIntersectionIterator<V, DE, CdtEdge<UE>, F, L>.NewFromHandles(this, from, to);
@@ -192,40 +192,40 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
                     var newEdge = ResolveConflictRegion(new List<FixedDirectedEdgeHandle>(conflictEdges), targetVertex);
                     if (newEdge.HasValue) result.Add(newEdge.Value);
                     conflictEdges.Clear();
-                    
+
                     iterator = LineIntersectionIterator<V, DE, CdtEdge<UE>, F, L>.NewFromHandles(this, targetVertex, to);
                     iterator.MoveNext(); // Skip start
                     from = targetVertex;
                 }
             }
         }
-        
+
         foreach (var edge in result)
         {
             MakeConstraintEdge(edge.AsUndirected());
         }
-        
+
         return result;
     }
 
     private FixedDirectedEdgeHandle? ResolveConflictRegion(List<FixedDirectedEdgeHandle> conflictEdges, FixedVertexHandle targetVertex)
     {
         if (conflictEdges.Count == 0) return null;
-        
+
         var first = conflictEdges[0];
         var firstEdge = DirectedEdge(first);
-        
+
         var firstBorderEdge = firstEdge.Rev().Prev().Handle;
         var lastBorderEdge = firstEdge.Rev().Next().Handle;
-        
+
         foreach (var edge in conflictEdges)
         {
             DcelOperations.FlipCw(_dcel, edge.AsUndirected());
         }
-        
+
         // Temporary constraints for border
         var tempConstraints = new List<FixedUndirectedEdgeHandle>();
-        
+
         void MakeTemp(FixedUndirectedEdgeHandle e)
         {
             if (!IsConstraint(e))
@@ -238,20 +238,20 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
                 _dcel.Edges[e.Index] = entry;
             }
         }
-        
+
         MakeTemp(firstBorderEdge.AsUndirected());
         MakeTemp(lastBorderEdge.AsUndirected());
-        
+
         var current = firstBorderEdge;
         FixedDirectedEdgeHandle? result = null;
-        
+
         while (current != lastBorderEdge.Rev())
         {
             var handle = DirectedEdge(current);
             var next = handle.Next().Handle.AsUndirected();
-            
+
             current = handle.CCW().Handle;
-            
+
             if (targetVertex == handle.To().Handle)
             {
                 MakeConstraintEdge(handle.Handle.AsUndirected());
@@ -259,13 +259,13 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
             }
             MakeTemp(next);
         }
-        
+
         // Legalize
         foreach (var edge in conflictEdges)
         {
             LegalizeEdge(edge, false);
         }
-        
+
         // Undo temp
         foreach (var e in tempConstraints)
         {
@@ -275,7 +275,7 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
             entry.UndirectedData = data;
             _dcel.Edges[e.Index] = entry;
         }
-        
+
         return result;
     }
 
@@ -367,7 +367,7 @@ public class ConstrainedDelaunayTriangulation<V, DE, UE, F, L> : TriangulationBa
 
         bool isValid = location switch
         {
-            PositionInTriangulation.OnEdge onEdge => 
+            PositionInTriangulation.OnEdge onEdge =>
                 onEdge.Edge.AsUndirected() == conflictEdge.Handle.AsUndirected(),
             PositionInTriangulation.OnFace onFace =>
                 onFace.Face == conflictEdge.Face().Handle || onFace.Face == conflictEdge.Rev().Face().Handle,

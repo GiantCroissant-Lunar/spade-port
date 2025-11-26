@@ -90,7 +90,7 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
     private Intersection<V, DE, UE, F>? GetFirstIntersection()
     {
         var location = _triangulation.LocateWithHintOptionCore(_lineFrom, null);
-        
+
         switch (location)
         {
             case PositionInTriangulation.OutsideOfConvexHull outside:
@@ -153,7 +153,7 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                         lineFromQuery = hullEdge.SideQuery(_lineFrom);
                     }
                 }
-                
+
             case PositionInTriangulation.OnFace onFace:
                 var face = _triangulation.Face(onFace.Face);
                 var startEdge = face.AdjacentEdge();
@@ -207,10 +207,10 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                 var edge = _triangulation.DirectedEdge(onEdge.Edge);
                 var edgeFrom = edge.From().Data.Position;
                 var edgeTo = edge.To().Data.Position;
-                
+
                 var fromQuery = MathUtils.SideQuery(_lineFrom, _lineTo, edgeFrom);
                 var toQuery = MathUtils.SideQuery(_lineFrom, _lineTo, edgeTo);
-                
+
                 if (fromQuery.IsOnLine && toQuery.IsOnLine)
                 {
                     var distTo = (edgeTo.Sub(_lineTo)).Length2();
@@ -253,7 +253,7 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                     }
                 }
                 return null;
-                
+
             default:
                 return null;
         }
@@ -284,15 +284,15 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
     private Intersection<V, DE, UE, F>? TraceDirectionOutOfEdge(DirectedEdgeHandle<V, DE, UE, F> edge)
     {
         // edge.SideQuery(_lineTo) must be Left or OnLine
-        
+
         var ePrev = edge.Face().IsOuter ? null : (DirectedEdgeHandle<V, DE, UE, F>?)edge.Prev();
         if (ePrev == null) return null; // Convex hull reached
 
         var oNext = edge.Next();
-        
+
         var ePrevInter = MathUtils.IntersectsEdgeNonCollinear(_lineFrom, _lineTo, ePrev.Value.From().Data.Position, ePrev.Value.To().Data.Position);
         var oNextInter = MathUtils.IntersectsEdgeNonCollinear(_lineFrom, _lineTo, oNext.From().Data.Position, oNext.To().Data.Position);
-        
+
         if (ePrevInter && oNextInter)
         {
             return new Intersection<V, DE, UE, F>.VertexIntersection(ePrev.Value.From());
@@ -347,7 +347,7 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
 
             currentQuery = nextQuery;
             currentEdge = next;
-            
+
             if (currentEdge.Handle == startEdge.Value.Handle) break;
         }
         return null;

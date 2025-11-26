@@ -15,7 +15,7 @@ public class Dcel<V, DE, UE, F>
         // I'll need to check dcel_operations.rs or just initialize it here.
         // Based on dcel.rs: self.faces.truncate(1); // Keep outer face
         // So there is always at least one face (outer face).
-        
+
         Faces.Add(new FaceEntry<F>
         {
             AdjacentEdge = null,
@@ -103,7 +103,7 @@ public class Dcel<V, DE, UE, F>
         var edgeIndex = handle.Index / 2;
         var entryIndex = handle.Index % 2;
         var edgeEntry = Edges[edgeIndex];
-        
+
         // Create a copy, update it
         var halfEdge = edgeEntry.Entries[entryIndex];
         // We can't pass a struct to Action and expect it to modify the original if it's by value.
@@ -122,18 +122,18 @@ public class Dcel<V, DE, UE, F>
         edgeEntry.Entries[entryIndex] = update(edgeEntry.Entries[entryIndex]);
         Edges[edgeIndex] = edgeEntry;
     }
-    
+
     // Overload for convenience when we want to modify properties
     internal void UpdateHalfEdge(FixedDirectedEdgeHandle handle, Action<Ref<HalfEdgeEntry>> update)
     {
         var edgeIndex = handle.Index / 2;
         var entryIndex = handle.Index % 2;
         var edgeEntry = Edges[edgeIndex];
-        
+
         var wrapper = new Ref<HalfEdgeEntry>(edgeEntry.Entries[entryIndex]);
         update(wrapper);
         edgeEntry.Entries[entryIndex] = wrapper.Value;
-        
+
         Edges[edgeIndex] = edgeEntry;
     }
 }

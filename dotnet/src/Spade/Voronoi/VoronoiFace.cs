@@ -53,6 +53,6 @@ public readonly struct VoronoiFace<V, DE, UE, F>
             // Use handle index comparison for more reliable equality check
         } while (current.Handle.Index != startEdge.Value.Handle.Index);
     }
-    
+
     public override string ToString() => $"VoronoiFace(Dual: {_delaunayVertex})";
 }

@@ -15,7 +15,7 @@ public readonly struct VertexHandle<V, DE, UE, F>
     }
 
     public V Data => _dcel.Vertices[Handle.Index].Data;
-    
+
     public DirectedEdgeHandle<V, DE, UE, F>? OutEdge()
     {
         var edge = _dcel.Vertices[Handle.Index].OutEdge;
@@ -133,7 +133,7 @@ public readonly struct FaceHandle<V, DE, UE, F>
     }
 
     public F Data => _dcel.Faces[Handle.Index].Data;
-    
+
     public bool IsOuter => Handle.Index == 0; // Assuming 0 is always outer face
 
     public DirectedEdgeHandle<V, DE, UE, F>? AdjacentEdge()
@@ -148,7 +148,7 @@ public readonly struct FaceHandle<V, DE, UE, F>
         var v0 = ((IHasPosition<double>)edge.From().Data).Position;
         var v1 = ((IHasPosition<double>)edge.To().Data).Position;
         var v2 = ((IHasPosition<double>)edge.Next().To().Data).Position;
-        
+
         return MathUtils.Circumcenter(v0, v1, v2);
     }
 }

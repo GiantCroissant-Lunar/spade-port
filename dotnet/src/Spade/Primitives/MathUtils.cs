@@ -68,7 +68,7 @@ public static class MathUtils
         {
             throw new ArgumentException("Coordinate is NaN");
         }
-        
+
         // TODO: Check MIN/MAX allowed values if needed
     }
 
@@ -91,7 +91,7 @@ public static class MathUtils
         // incircle test
         // Returns true if p is inside the circumcircle of v1, v2, v3
         // Assumes v1, v2, v3 are CCW
-        
+
         // Use robust predicates for double precision
         if (typeof(S) == typeof(double))
         {
@@ -104,7 +104,7 @@ public static class MathUtils
             var det = RobustPredicates.Incircle(v3d, v2d, v1d, pd);
             return det < 0.0;
         }
-        
+
         var ax = v1.X - p.X;
         var ay = v1.Y - p.Y;
         var bx = v2.X - p.X;

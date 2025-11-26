@@ -50,7 +50,7 @@ public readonly struct DirectedVoronoiEdge<V, DE, UE, F>
     {
         return new DirectedVoronoiEdge<V, DE, UE, F>(_delaunayEdge.CW());
     }
-    
+
     public Point2<double> DirectionVector()
     {
         var from = _delaunayEdge.From().Data.Position;
@@ -58,7 +58,7 @@ public readonly struct DirectedVoronoiEdge<V, DE, UE, F>
         var diff = to.Sub(from);
         return new Point2<double>(-diff.Y, diff.X);
     }
-    
+
     public override string ToString() => $"DirectedVoronoiEdge(Dual: {_delaunayEdge})";
 }
 
@@ -76,6 +76,6 @@ public readonly struct UndirectedVoronoiEdge<V, DE, UE, F>
     }
 
     public UndirectedEdgeHandle<V, DE, UE, F> AsDelaunayEdge() => _delaunayEdge;
-    
+
     public override string ToString() => $"UndirectedVoronoiEdge(Dual: {_delaunayEdge})";
 }

@@ -6,7 +6,7 @@ namespace Spade.Primitives;
 /// A two-dimensional point.
 /// This is the basic type used for defining positions.
 /// </summary>
-public struct Point2<S> : IEquatable<Point2<S>>, IHasPosition<S> 
+public struct Point2<S> : IEquatable<Point2<S>>, IHasPosition<S>
     where S : struct, INumber<S>, ISignedNumber<S>
 {
     /// <summary>

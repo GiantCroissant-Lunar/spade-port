@@ -10,7 +10,7 @@ public abstract class VoronoiVertex<V, DE, UE, F>
     where F : new()
 {
     public abstract Point2<double>? Position { get; }
-    
+
     public sealed class Inner : VoronoiVertex<V, DE, UE, F>
     {
         public FaceHandle<V, DE, UE, F> Face { get; }
@@ -21,7 +21,7 @@ public abstract class VoronoiVertex<V, DE, UE, F>
         }
 
         public override Point2<double>? Position => Face.Circumcenter();
-        
+
         public override string ToString() => $"InnerVoronoiVertex({Position})";
     }
 
@@ -35,7 +35,7 @@ public abstract class VoronoiVertex<V, DE, UE, F>
         }
 
         public override Point2<double>? Position => null;
-        
+
         public override string ToString() => $"OuterVoronoiVertex(Dual: {Edge.AsDelaunayEdge()})";
     }
 }

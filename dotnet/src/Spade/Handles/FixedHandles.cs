@@ -13,7 +13,7 @@ public readonly struct FixedVertexHandle : IEquatable<FixedVertexHandle>
     public static explicit operator FixedVertexHandle(int index) => new FixedVertexHandle(index);
 
     public override string ToString() => $"Vertex({Index})";
-    
+
     public bool Equals(FixedVertexHandle other) => Index == other.Index;
     public override bool Equals(object? obj) => obj is FixedVertexHandle other && Equals(other);
     public override int GetHashCode() => Index.GetHashCode();
