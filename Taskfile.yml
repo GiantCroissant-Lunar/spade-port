@@ -37,3 +37,16 @@ tasks:
     desc: Pack NuGet packages and sync to local feed (requires build/nuke/build.config.json)
     cmds:
       - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Pack --configuration Release
+
+  samples-build:
+    desc: Build all Spade sample projects (samples/Spade.Samples.sln)
+    cmds:
+      - cmd: dotnet build dotnet/samples/Spade.Samples.sln
+
+  samples-run:
+    desc: Build samples solution and run a specific sample project (override SAMPLE=Spade.Samples.LloydRelaxation, etc.)
+    vars:
+      SAMPLE: Spade.Samples.DelaunayVoronoiRefinement
+    cmds:
+      - cmd: dotnet build dotnet/samples/Spade.Samples.sln
+      - cmd: dotnet run --project dotnet/samples/{{.SAMPLE}}/{{.SAMPLE}}.csproj
