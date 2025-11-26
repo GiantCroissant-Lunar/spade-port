@@ -7,38 +7,34 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Utilities.Collections;
+using Nuke.Common.Tools.GitVersion;
 using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 
-class Build : NukeBuild
+class Build : NukeBuild,
+    IBuildConfig,
+    IClean,
+    IRestore,
+    ICompile,
+    ITest,
+    IPublish
 {
+    [GitVersion(NoFetch = true)]
+    readonly GitVersion GitVersion;
+
+    public string GitVersionNuGet
+    {
+        get
+        {
+            return GitVersion?.SemVer ?? "0.0.0-local";
+        }
+    }
+
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
     ///   - JetBrains Rider            https://nuke.build/rider
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
-
-    public static int Main () => Execute<Build>(x => x.Compile);
-
-    [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
-
-    Target Clean => _ => _
-        .Before(Restore)
-        .Executes(() =>
-        {
-        });
-
-    Target Restore => _ => _
-        .Executes(() =>
-        {
-        });
-
-    Target Compile => _ => _
-        .DependsOn(Restore)
-        .Executes(() =>
-        {
-        });
+    public static int Main () => Execute<Build>(x => ((ICompile)x).Compile);
 
 }

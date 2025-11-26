@@ -1,0 +1,39 @@
+version: '3'
+
+vars:
+  NUKE_BUILD_DIR: build/nuke/build
+  NUKE_EXE: _build.dll
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+
+tasks:
+  default:
+    desc: Run the default NUKE target (Compile)
+    cmds:
+      - task: compile
+
+  clean:
+    desc: Clean build artifacts via NUKE
+    cmds:
+      - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Clean
+
+  compile:
+    desc: Compile the Spade solution via NUKE
+    cmds:
+      - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Compile --configuration Release
+
+  test:
+    desc: Run tests via NUKE
+    cmds:
+      - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Test --configuration Release
+
+  pack:
+    desc: Build and pack NuGet packages for Spade and Spade.Advanced (GitVersion-based)
+    cmds:
+      - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Pack --configuration Release
+
+  pack-local-feed:
+    desc: Pack NuGet packages and sync to local feed (requires build/nuke/build.config.json)
+    cmds:
+      - cmd: dotnet run --project {{.NUKE_BUILD_DIR}} -- Pack --configuration Release
