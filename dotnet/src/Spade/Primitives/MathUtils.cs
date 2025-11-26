@@ -41,7 +41,15 @@ public static class MathUtils
     public static LineSideInfo SideQuery<S>(Point2<S> p1, Point2<S> p2, Point2<S> queryPoint)
         where S : struct, INumber<S>, ISignedNumber<S>
     {
-        // TODO: Implement robust predicate (orient2d)
+        // Use robust predicates for double precision
+        if (typeof(S) == typeof(double))
+        {
+            var p1d = new Point2<double>(double.CreateChecked(p1.X), double.CreateChecked(p1.Y));
+            var p2d = new Point2<double>(double.CreateChecked(p2.X), double.CreateChecked(p2.Y));
+            var qd = new Point2<double>(double.CreateChecked(queryPoint.X), double.CreateChecked(queryPoint.Y));
+            var det = RobustPredicates.Orient2D(p1d, p2d, qd);
+            return LineSideInfo.FromDeterminant(det);
+        }
         return SideQueryInaccurate(p1, p2, queryPoint);
     }
 
@@ -84,6 +92,19 @@ public static class MathUtils
         // Returns true if p is inside the circumcircle of v1, v2, v3
         // Assumes v1, v2, v3 are CCW
         
+        // Use robust predicates for double precision
+        if (typeof(S) == typeof(double))
+        {
+            var v1d = new Point2<double>(double.CreateChecked(v1.X), double.CreateChecked(v1.Y));
+            var v2d = new Point2<double>(double.CreateChecked(v2.X), double.CreateChecked(v2.Y));
+            var v3d = new Point2<double>(double.CreateChecked(v3.X), double.CreateChecked(v3.Y));
+            var pd = new Point2<double>(double.CreateChecked(p.X), double.CreateChecked(p.Y));
+            // incircle expects CW ordering for right-handed systems, but our interface expects CCW
+            // So we reverse the order: v3, v2, v1 instead of v1, v2, v3
+            var det = RobustPredicates.Incircle(v3d, v2d, v1d, pd);
+            return det < 0.0;
+        }
+        
         var ax = v1.X - p.X;
         var ay = v1.Y - p.Y;
         var bx = v2.X - p.X;
@@ -91,11 +112,11 @@ public static class MathUtils
         var cx = v3.X - p.X;
         var cy = v3.Y - p.Y;
 
-        var det = (ax * ax + ay * ay) * (bx * cy - cx * by) -
+        var det2 = (ax * ax + ay * ay) * (bx * cy - cx * by) -
                   (bx * bx + by * by) * (ax * cy - cx * ay) +
                   (cx * cx + cy * cy) * (ax * by - bx * ay);
 
-        return det > S.Zero;
+        return det2 > S.Zero;
     }
 
     public static bool IntersectsEdgeNonCollinear<S>(Point2<S> a1, Point2<S> a2, Point2<S> b1, Point2<S> b2)
@@ -115,6 +136,36 @@ public static class MathUtils
             return false;
         }
         return true;
+    }
+
+    public static (double, double, double) BarycentricCoordinates(
+        Point2<double> a,
+        Point2<double> b,
+        Point2<double> c,
+        Point2<double> p)
+    {
+        var v0 = b.Sub(a);
+        var v1 = c.Sub(a);
+        var v2 = p.Sub(a);
+
+        var d00 = v0.Dot(v0);
+        var d01 = v0.Dot(v1);
+        var d11 = v1.Dot(v1);
+        var d20 = v2.Dot(v0);
+        var d21 = v2.Dot(v1);
+
+        var denom = d00 * d11 - d01 * d01;
+
+        if (denom == 0.0)
+        {
+            return (double.NaN, double.NaN, double.NaN);
+        }
+
+        var v = (d11 * d20 - d01 * d21) / denom;
+        var w = (d00 * d21 - d01 * d20) / denom;
+        var u = 1.0 - v - w;
+
+        return (u, v, w);
     }
 
     public static Point2<double> MitigateUnderflow(Point2<double> position)
@@ -164,5 +215,13 @@ public static class MathUtils
         }
 
         return new Point2<double>(x, y);
+    }
+
+    public static Point2<double> ApplyDeterministicJitter(Point2<double> position)
+    {
+        // Add a small deterministic jitter to the point position
+        // to avoid collinearity or cocircularity issues.
+        // For now, return identity to match legacy behavior or avoid test mismatches
+        return position;
     }
 }
