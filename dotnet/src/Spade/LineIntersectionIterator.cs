@@ -94,9 +94,65 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
         switch (location)
         {
             case PositionInTriangulation.OutsideOfConvexHull outside:
-                // TODO: Implement logic for starting outside convex hull
-                // For now, assume we start inside or on boundary
-                throw new NotImplementedException("Starting outside convex hull not fully implemented");
+                {
+                    var hullEdge = _triangulation.DirectedEdge(outside.Edge);
+                    var lineFromQuery = hullEdge.SideQuery(_lineFrom);
+
+                    while (true)
+                    {
+                        if (lineFromQuery.IsOnLine)
+                        {
+                            // Starting point is on the line of a hull edge
+                            var distFrom = hullEdge.From().Data.Position.Sub(_lineFrom).Length2();
+                            var distTo = hullEdge.To().Data.Position.Sub(_lineFrom).Length2();
+                            var vertex = distTo < distFrom ? hullEdge.To() : hullEdge.From();
+                            return new Intersection<V, DE, UE, F>.VertexIntersection(vertex);
+                        }
+
+                        var lineToQuery = hullEdge.SideQuery(_lineTo);
+                        if (lineToQuery.IsOnLeftSide)
+                        {
+                            // Target is on the left side of hull edge - line doesn't enter hull
+                            return null;
+                        }
+
+                        var hullEdgeFrom = hullEdge.From().Data.Position;
+                        var hullEdgeTo = hullEdge.To().Data.Position;
+                        var hullEdgeFromQuery = MathUtils.SideQuery(_lineFrom, _lineTo, hullEdgeFrom);
+                        var hullEdgeToQuery = MathUtils.SideQuery(_lineFrom, _lineTo, hullEdgeTo);
+
+                        var fromLeft = hullEdgeFromQuery.IsOnLeftSide;
+                        var toLeftOrLine = hullEdgeToQuery.IsOnLeftSideOrOnLine;
+
+                        if (fromLeft && toLeftOrLine)
+                        {
+                            hullEdge = hullEdge.Prev();
+                        }
+                        else if (!fromLeft && !toLeftOrLine)
+                        {
+                            hullEdge = hullEdge.Next();
+                        }
+                        else if (!fromLeft && toLeftOrLine)
+                        {
+                            if (hullEdgeToQuery.IsOnLine)
+                            {
+                                return new Intersection<V, DE, UE, F>.VertexIntersection(hullEdge.To());
+                            }
+                            if (hullEdgeFromQuery.IsOnLine)
+                            {
+                                return new Intersection<V, DE, UE, F>.VertexIntersection(hullEdge.From());
+                            }
+                            return new Intersection<V, DE, UE, F>.EdgeIntersection(hullEdge.Rev());
+                        }
+                        else
+                        {
+                            // (true, false) - unexpected topology
+                            throw new InvalidOperationException("Unexpected edge topology in OutsideOfConvexHull handling");
+                        }
+
+                        lineFromQuery = hullEdge.SideQuery(_lineFrom);
+                    }
+                }
                 
             case PositionInTriangulation.OnFace onFace:
                 var face = _triangulation.Face(onFace.Face);
@@ -182,10 +238,19 @@ public class LineIntersectionIterator<V, DE, UE, F, L> : IEnumerable<Intersectio
                 }
 
             case PositionInTriangulation.NoTriangulation:
-                if (_triangulation.NumVertices > 0)
+                // Check if single vertex is on the line
+                foreach (var vertex in _triangulation.Vertices())
                 {
-                    // Check if single vertex is on line
-                    // ...
+                    var singleVertex = vertex.Data.Position;
+                    var projection = MathUtils.ProjectPoint(_lineFrom, _lineTo, singleVertex);
+                    if (projection.IsOnEdge)
+                    {
+                        var query = MathUtils.SideQuery(_lineFrom, _lineTo, singleVertex);
+                        if (query.IsOnLine)
+                        {
+                            return new Intersection<V, DE, UE, F>.VertexIntersection(vertex);
+                        }
+                    }
                 }
                 return null;
                 
