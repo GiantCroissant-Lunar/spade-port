@@ -1,0 +1,7 @@
+[package]
+name = "spade-grid3x3-oracle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+spade = { path = "../../ref-projects/spade" }
