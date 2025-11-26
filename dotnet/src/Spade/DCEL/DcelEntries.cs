@@ -2,10 +2,17 @@ using Spade.Handles;
 
 namespace Spade.DCEL;
 
+internal enum FaceKind
+{
+    Outer,
+    Inner
+}
+
 internal struct FaceEntry<F>
 {
     public FixedDirectedEdgeHandle? AdjacentEdge;
     public F Data;
+    public FaceKind Kind;
 }
 
 internal struct VertexEntry<V>

@@ -85,6 +85,15 @@ public readonly struct DirectedEdgeHandle<V, DE, UE, F>
         return Rev().Next();
     }
 
+    public VertexHandle<V, DE, UE, F>? OppositeVertex()
+    {
+        if (Face().IsOuter)
+        {
+            return null;
+        }
+        return Next().To();
+    }
+
     public LineSideInfo SideQuery(Point2<double> position)
     {
         var p1 = ((IHasPosition<double>)From().Data).Position;
