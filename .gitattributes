@@ -1,0 +1,10 @@
+* text=auto
+
+*.cs diff=csharp
+*.csproj text
+*.sln text
+*.md text
+*.yml text
+*.yaml text
+*.json text
+*.xml text

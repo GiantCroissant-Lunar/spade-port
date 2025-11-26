@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - 'dotnet/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'dotnet/**'
+      - '.github/workflows/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        working-directory: dotnet
+        run: dotnet restore Spade.sln
+
+      - name: Build
+        working-directory: dotnet
+        run: dotnet build Spade.sln --configuration Release --no-restore
+
+      - name: Test
+        working-directory: dotnet
+        run: dotnet test Spade.sln --configuration Release --no-build --logger trx
