@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Spade\Spade.csproj" />
+    <ProjectReference Include="..\..\src\Spade.Advanced\Spade.Advanced.csproj" />
   </ItemGroup>
 </Project>
