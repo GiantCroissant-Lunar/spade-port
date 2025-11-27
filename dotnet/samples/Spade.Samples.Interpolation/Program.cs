@@ -41,7 +41,48 @@ static double ComputeRmse(double[,] grid, Point2<double> min, Point2<double> max
     return count > 0 ? Math.Sqrt(sumSq / count) : double.NaN;
 }
 
-static void RunGridBenchmark()
+static double TrueFunction3D(Point3<double> p) => Math.Sin(p.X) + Math.Cos(p.Y) + 0.5 * p.Z;
+
+static double ComputeRmse3D(double[,,] grid, Point3<double> min, Point3<double> max)
+{
+    var nz = grid.GetLength(0);
+    var ny = grid.GetLength(1);
+    var nx = grid.GetLength(2);
+
+    var dx = nx == 1 ? 0.0 : (max.X - min.X) / (nx - 1);
+    var dy = ny == 1 ? 0.0 : (max.Y - min.Y) / (ny - 1);
+    var dz = nz == 1 ? 0.0 : (max.Z - min.Z) / (nz - 1);
+
+    double sumSq = 0.0;
+    long count = 0;
+
+    for (int iz = 0; iz < nz; iz++)
+    {
+        var z = nz == 1 ? 0.5 * (min.Z + max.Z) : min.Z + iz * dz;
+        for (int iy = 0; iy < ny; iy++)
+        {
+            var y = ny == 1 ? 0.5 * (min.Y + max.Y) : min.Y + iy * dy;
+            for (int ix = 0; ix < nx; ix++)
+            {
+                var x = nx == 1 ? 0.5 * (min.X + max.X) : min.X + ix * dx;
+                var v = grid[iz, iy, ix];
+                if (double.IsNaN(v) || double.IsInfinity(v))
+                {
+                    continue;
+                }
+
+                var truth = TrueFunction3D(new Point3<double>(x, y, z));
+                var diff = v - truth;
+                sumSq += diff * diff;
+                count++;
+            }
+        }
+    }
+
+    return count > 0 ? Math.Sqrt(sumSq / count) : double.NaN;
+}
+
+static (long ExactMs, double ExactRmse, long DiscreteMs, double DiscreteRmse) RunGridBenchmark()
 {
     Console.WriteLine();
     Console.WriteLine("Grid interpolation benchmark (exact vs discrete)\n");
@@ -90,6 +131,60 @@ static void RunGridBenchmark()
     Console.WriteLine($"Sample points: {samplePoints.Count}, grid: {width}x{height}");
     Console.WriteLine($"Exact GridNaturalNeighbor2D:    {exactMs,6} ms, RMSE = {exactRmse:0.0000}");
     Console.WriteLine($"DiscreteGridNaturalNeighbor2D: {discreteMs,6} ms, RMSE = {discreteRmse:0.0000}");
+
+    return (exactMs, exactRmse, discreteMs, discreteRmse);
+}
+
+static (long DiscreteMs, double DiscreteRmse) Run3DGridBenchmark()
+{
+    Console.WriteLine();
+    Console.WriteLine("3D grid interpolation benchmark (discrete)\n");
+
+    const int samplePerAxis = 21;
+    const double minCoord = -2.0;
+    const double maxCoord = 2.0;
+
+    var samplePoints = new List<Point3<double>>();
+    var sampleValues = new List<double>();
+
+    for (int iz = 0; iz < samplePerAxis; iz++)
+    {
+        var tz = samplePerAxis == 1 ? 0.5 : iz / (double)(samplePerAxis - 1);
+        var z = minCoord + tz * (maxCoord - minCoord);
+        for (int iy = 0; iy < samplePerAxis; iy++)
+        {
+            var ty = samplePerAxis == 1 ? 0.5 : iy / (double)(samplePerAxis - 1);
+            var y = minCoord + ty * (maxCoord - minCoord);
+            for (int ix = 0; ix < samplePerAxis; ix++)
+            {
+                var tx = samplePerAxis == 1 ? 0.5 : ix / (double)(samplePerAxis - 1);
+                var x = minCoord + tx * (maxCoord - minCoord);
+
+                var p = new Point3<double>(x, y, z);
+                samplePoints.Add(p);
+                sampleValues.Add(TrueFunction3D(p));
+            }
+        }
+    }
+
+    var min = new Point3<double>(minCoord, minCoord, minCoord);
+    var max = new Point3<double>(maxCoord, maxCoord, maxCoord);
+
+    const int nx = 64;
+    const int ny = 64;
+    const int nz = 64;
+
+    var sw = Stopwatch.StartNew();
+    var grid = NaturalNeighborGrid3D.Discrete(samplePoints, sampleValues, nx, ny, nz, min, max);
+    sw.Stop();
+    var discreteMs = sw.ElapsedMilliseconds;
+
+    var rmse = ComputeRmse3D(grid, min, max);
+
+    Console.WriteLine($"Sample points: {samplePoints.Count}, grid: {nx}x{ny}x{nz}");
+    Console.WriteLine($"Discrete NaturalNeighborGrid3D: {discreteMs,6} ms, RMSE = {rmse:0.0000}");
+
+    return (discreteMs, rmse);
 }
 
 // Build a Delaunay triangulation over a small grid of sample points
@@ -166,7 +261,15 @@ foreach (var q in queries)
 	Console.WriteLine($"  {q.X,4:F1}, {q.Y,4:F1} | {truth,7:F4} | {nnGradText}");
 }
 
-RunGridBenchmark();
+var (exactMs, exactRmse, discreteMs, discreteRmse) = RunGridBenchmark();
+var (discrete3dMs, discrete3dRmse) = Run3DGridBenchmark();
+
+Console.WriteLine();
+Console.WriteLine("Grid benchmark summary (2D vs 3D):");
+Console.WriteLine("  Method                           Time [ms]    RMSE");
+Console.WriteLine($"  2D exact natural neighbor       {exactMs,8}   {exactRmse:0.0000}");
+Console.WriteLine($"  2D discrete natural neighbor    {discreteMs,8}   {discreteRmse:0.0000}");
+Console.WriteLine($"  3D discrete natural neighbor    {discrete3dMs,8}   {discrete3dRmse:0.0000}");
 
 Console.WriteLine("\nDone. Press any key to exit.");
 Console.ReadKey();
