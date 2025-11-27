@@ -20,6 +20,13 @@ public static class DelaunayTriangulationExtensions
         return new BarycentricInterpolator<V, DE, UE, F, L>(triangulation);
     }
 
+    /// <summary>
+    /// Creates a natural neighbor interpolator over the given triangulation.
+    /// </summary>
+    /// <remarks>
+    /// The returned interpolator instance is not thread-safe. For concurrent use from multiple threads
+    /// over a shared triangulation, use <see cref="ThreadSafeNaturalNeighbor{V,DE,UE,F,L}(DelaunayTriangulation{V,DE,UE,F,L})"/>.
+    /// </remarks>
     public static NaturalNeighborInterpolator<V, DE, UE, F, L> NaturalNeighbor<V, DE, UE, F, L>(
         this DelaunayTriangulation<V, DE, UE, F, L> triangulation)
         where V : IHasPosition<double>, new()
@@ -29,6 +36,24 @@ public static class DelaunayTriangulationExtensions
         where L : IHintGenerator<double>, new()
     {
         return new NaturalNeighborInterpolator<V, DE, UE, F, L>(triangulation);
+    }
+
+    /// <summary>
+    /// Creates a thread-safe natural neighbor interpolator over the given triangulation.
+    /// </summary>
+    /// <remarks>
+    /// This method is appropriate when a single triangulation instance is shared across multiple threads
+    /// that all need to perform interpolation concurrently.
+    /// </remarks>
+    public static ThreadSafeNaturalNeighborInterpolator<V, DE, UE, F, L> ThreadSafeNaturalNeighbor<V, DE, UE, F, L>(
+        this DelaunayTriangulation<V, DE, UE, F, L> triangulation)
+        where V : IHasPosition<double>, new()
+        where DE : new()
+        where UE : new()
+        where F : new()
+        where L : IHintGenerator<double>, new()
+    {
+        return new ThreadSafeNaturalNeighborInterpolator<V, DE, UE, F, L>(triangulation);
     }
 
     public static bool TryIsInsideConvexHull<V, DE, UE, F, L>(
