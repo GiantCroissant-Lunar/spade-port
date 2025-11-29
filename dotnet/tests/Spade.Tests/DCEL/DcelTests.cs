@@ -12,7 +12,7 @@ public class DcelTests
     public void TestDcelInitialization()
     {
         var dcel = new Dcel<Point2<double>, int, int, int>();
-        
+
         dcel.NumVertices.Should().Be(0);
         dcel.NumFaces.Should().Be(1); // Outer face
         dcel.NumDirectedEdges.Should().Be(0);

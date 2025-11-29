@@ -77,7 +77,7 @@ foreach (var face in triangulation.VoronoiFaces())
     {
         var from = edge.From();
         var to = edge.To();
-        
+
         if (from is VoronoiVertex<...>.Inner innerFrom && to is VoronoiVertex<...>.Inner innerTo)
         {
              Console.WriteLine($"Finite edge from {innerFrom.Position} to {innerTo.Position}");

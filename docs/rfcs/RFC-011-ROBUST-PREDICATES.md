@@ -1,9 +1,9 @@
 # RFC-011: Robust Geometric Predicates (orient2d / incircle)
 
-**Status:** Draft  
-**Phase:** Cross-cutting (applies to Phases 2–5)  
-**Duration:** 3–5 days (design + implementation + tests)  
-**Complexity:** ⭐⭐⭐ Hard  
+**Status:** Draft
+**Phase:** Cross-cutting (applies to Phases 2–5)
+**Duration:** 3–5 days (design + implementation + tests)
+**Complexity:** ⭐⭐⭐ Hard
 **Dependencies:** RFC-002, RFC-003, RFC-004, RFC-005
 
 ---

@@ -1,10 +1,10 @@
 # RFC-003: Phase 2 - Basic Delaunay Triangulation
 
-**Status:** Draft  
-**Phase:** 2 of 5  
-**Duration:** Week 2 (5-7 days)  
-**Complexity:** ⭐⭐⭐ Hard  
-**Dependencies:** Phase 1 (RFC-002)  
+**Status:** Draft
+**Phase:** 2 of 5
+**Duration:** Week 2 (5-7 days)
+**Complexity:** ⭐⭐⭐ Hard
+**Dependencies:** Phase 1 (RFC-002)
 
 ---
 
@@ -151,10 +151,10 @@ public void Triangulation_SatisfiesDelaunayProperty()
 
 ## Success Criteria
 
-✅ Can triangulate point sets  
-✅ All triangles satisfy Delaunay property  
-✅ Bulk loading works  
-✅ Performance: 10,000 points in <1 second  
+✅ Can triangulate point sets
+✅ All triangles satisfy Delaunay property
+✅ Bulk loading works
+✅ Performance: 10,000 points in <1 second
 ✅ All tests passing (25+ tests)
 
 ---

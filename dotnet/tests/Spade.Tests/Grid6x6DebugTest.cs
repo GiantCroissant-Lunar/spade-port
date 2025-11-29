@@ -27,7 +27,7 @@ public class Grid6x6DebugTest
 
         sw.Restart();
         Console.WriteLine($"Starting DirectedEdges() enumeration (expected {triangulation.NumDirectedEdges} edges)...");
-        
+
         int count = 0;
         foreach (var edge in triangulation.DirectedEdges())
         {
@@ -36,7 +36,7 @@ public class Grid6x6DebugTest
             {
                 Console.WriteLine($"  Enumerated {count} edges, elapsed: {sw.ElapsedMilliseconds}ms");
             }
-            
+
             if (sw.ElapsedMilliseconds > 10000)
             {
                 Console.WriteLine($"ERROR: Enumeration taking too long!");
@@ -48,7 +48,7 @@ public class Grid6x6DebugTest
         }
 
         Console.WriteLine($"DirectedEdges() enumeration complete: {count} edges in {sw.ElapsedMilliseconds}ms");
-        
+
         // Verify count matches
         if (count != triangulation.NumDirectedEdges)
         {

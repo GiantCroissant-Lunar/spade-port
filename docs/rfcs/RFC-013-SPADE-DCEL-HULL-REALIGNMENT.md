@@ -1,9 +1,9 @@
 # RFC-013: Spade .NET DCEL & Hull Topology Realignment
 
-**Status:** Draft  
-**Phase:** Targeted DCEL / refinement alignment (post RFC-012)  
-**Scope:** `spade-port/dotnet/src/Spade` DCEL + hull + refinement, plus related tests  
-**Complexity:** ⭐⭐⭐⭐ Hard  
+**Status:** Draft
+**Phase:** Targeted DCEL / refinement alignment (post RFC-012)
+**Scope:** `spade-port/dotnet/src/Spade` DCEL + hull + refinement, plus related tests
+**Complexity:** ⭐⭐⭐⭐ Hard
 **Dependencies:** RFC-004 (Mesh Refinement), RFC-012 (Port Completion)
 
 ---
@@ -284,4 +284,3 @@ This fallback remains, but the expectation after DCEL realignment is that the ex
   - Mitigation: run FMG integration scenarios after DCEL changes and adjust only if they relied on bugs.
 
 This RFC is considered complete when the DCEL/hull operations are structurally aligned with Rust, all relevant tests are green, and the invariants described here hold in DEBUG builds.
-

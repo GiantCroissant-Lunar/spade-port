@@ -12,7 +12,7 @@ repos:
       # Run dotnet format on the C# projects to enforce consistent style.
       - id: dotnet-format
         name: dotnet format (Spade solution)
-        entry: dotnet format
+        entry: dotnet format dotnet/Spade.sln
         language: system
         pass_filenames: false
         stages: [commit]

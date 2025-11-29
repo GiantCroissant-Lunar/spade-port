@@ -37,4 +37,3 @@ This document records intentional or currently accepted differences between the 
 - Until we have a direct dump of the Rust DCEL for this exact scenario to reproduce its tie‑breaking precisely, this test’s strict adjacency expectation should be treated as *advisory* rather than a correctness requirement for the port.
 
 In short: the C# port is Delaunay‑correct on the 3×3 grid, but may not reproduce the exact central adjacency pattern asserted in `DelaunayTopology_Matches_OriginalSpade_On_3x3_Grid`.
-

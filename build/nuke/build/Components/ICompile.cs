@@ -5,7 +5,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 interface ICompile : INukeBuild
 {
-    [Parameter("Configuration to build")]        
+    [Parameter("Configuration to build")]
     string Configuration => TryGetValue(() => Configuration) ?? "Debug";
 
     [Solution("dotnet/Spade.sln")]

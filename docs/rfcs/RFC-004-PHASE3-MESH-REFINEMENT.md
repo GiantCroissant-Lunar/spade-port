@@ -1,10 +1,10 @@
 # RFC-004: Phase 3 - Mesh Refinement
 
-**Status:** Draft  
-**Phase:** 3 of 5  
-**Duration:** Week 3 (5-7 days)  
-**Complexity:** ⭐⭐⭐ Hard  
-**Dependencies:** Phase 2 (RFC-003)  
+**Status:** Draft
+**Phase:** 3 of 5
+**Duration:** Week 3 (5-7 days)
+**Complexity:** ⭐⭐⭐ Hard
+**Dependencies:** Phase 2 (RFC-003)
 
 ---
 
@@ -183,11 +183,11 @@ public void Refine_EnforcesMaximumArea()
 
 ## Success Criteria
 
-✅ Can enforce minimum angle constraints  
-✅ Can enforce maximum area constraints  
-✅ Steiner points inserted correctly  
-✅ Algorithm terminates  
-✅ Performance: 10,000 points refined in <5 seconds  
+✅ Can enforce minimum angle constraints
+✅ Can enforce maximum area constraints
+✅ Steiner points inserted correctly
+✅ Algorithm terminates
+✅ Performance: 10,000 points refined in <5 seconds
 ✅ All tests passing (35+ tests)
 
 ---

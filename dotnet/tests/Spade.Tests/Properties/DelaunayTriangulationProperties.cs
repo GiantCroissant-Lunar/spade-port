@@ -33,7 +33,7 @@ public class DelaunayTriangulationProperties
             var triangulation = BuildTriangulation(points);
 
             var V = triangulation.NumVertices;
-            var E = triangulation.NumUndirectedEdges; 
+            var E = triangulation.NumUndirectedEdges;
             var F = triangulation.NumFaces;
 
             // Euler's formula: V - E + F = 2
@@ -60,8 +60,8 @@ public class DelaunayTriangulationProperties
             {
                 var twin = edge.Rev();
                 var twinTwin = twin.Rev();
-                
-                twinTwin.Handle.Index.Should().Be(edge.Handle.Index, 
+
+                twinTwin.Handle.Index.Should().Be(edge.Handle.Index,
                     $"Edge {edge.Handle.Index} twin integrity failed");
             }
         }
@@ -108,7 +108,7 @@ public class DelaunayTriangulationProperties
             // BFS from first vertex
             var visited = new HashSet<int>();
             var queue = new Queue<int>();
-            
+
             var firstVertex = triangulation.Vertices().First();
             queue.Enqueue(firstVertex.Handle.Index);
             visited.Add(firstVertex.Handle.Index);
@@ -117,7 +117,7 @@ public class DelaunayTriangulationProperties
             {
                 var currentIdx = queue.Dequeue();
                 var vertex = triangulation.Vertex(new Spade.Handles.FixedVertexHandle(currentIdx));
-                
+
                 var outEdge = vertex.OutEdge();
                 if (outEdge == null) continue;
 
@@ -140,7 +140,7 @@ public class DelaunayTriangulationProperties
                 } while (edge.Handle.Index != start);
             }
 
-            visited.Count.Should().Be(triangulation.NumVertices, 
+            visited.Count.Should().Be(triangulation.NumVertices,
                 $"All {triangulation.NumVertices} vertices should be reachable");
         }
     }
@@ -162,7 +162,7 @@ public class DelaunayTriangulationProperties
             {
                 var next = edge.Next();
                 var prev = edge.Prev();
-                
+
                 next.Prev().Handle.Index.Should().Be(edge.Handle.Index, "next.prev == self");
                 prev.Next().Handle.Index.Should().Be(edge.Handle.Index, "prev.next == self");
             }
@@ -181,11 +181,11 @@ public class DelaunayTriangulationProperties
         {
             var x = (rng.NextDouble() - 0.5) * 200; // Range: -100 to 100
             var y = (rng.NextDouble() - 0.5) * 200;
-            
+
             // Round to avoid floating point duplicates
             x = Math.Round(x, 6);
             y = Math.Round(y, 6);
-            
+
             if (seen.Add((x, y)))
             {
                 points.Add(new Point2<double>(x, y));
@@ -195,7 +195,7 @@ public class DelaunayTriangulationProperties
         return points;
     }
 
-    private static DelaunayTriangulation<Point2<double>, int, int, int, LastUsedVertexHintGenerator<double>> 
+    private static DelaunayTriangulation<Point2<double>, int, int, int, LastUsedVertexHintGenerator<double>>
         BuildTriangulation(List<Point2<double>> points)
     {
         var triangulation = new DelaunayTriangulation<Point2<double>, int, int, int, LastUsedVertexHintGenerator<double>>();

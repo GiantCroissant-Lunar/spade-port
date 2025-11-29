@@ -71,7 +71,7 @@ With configuration:
 [xUnit.net 00:00:00.24]       Expected spadeAdjacency[i] to be a collection with 3 item(s) because adjacency for vertex 0 should match NTS on rectangle-with-center, but {1, 3}&#xD;
 [xUnit.net 00:00:00.24]       contains 1 item(s) less than&#xD;
 [xUnit.net 00:00:00.24]       {3, 1, 4}.&#xD;
-[xUnit.net 00:00:00.24]       
+[xUnit.net 00:00:00.24]
 With configuration:
 - Prefer the declared type of the members&#xD;
 [xUnit.net 00:00:00.24]       - Compare enums by value&#xD;

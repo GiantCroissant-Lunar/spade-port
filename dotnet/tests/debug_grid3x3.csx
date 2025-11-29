@@ -34,7 +34,7 @@ foreach (var face in triangulation.InnerFaces())
 {
     var edge = face.AdjacentEdge();
     if (edge == null) continue;
-    
+
     var vertices = new List<int>();
     var start = edge.Value;
     var current = start;
@@ -45,7 +45,7 @@ foreach (var face in triangulation.InnerFaces())
         vertices.Add(idx);
         current = current.Next();
     } while (current.Handle.Index != start.Handle.Index);
-    
+
     vertices.Sort();
     Console.WriteLine($"[{string.Join(", ", vertices)}]");
 }

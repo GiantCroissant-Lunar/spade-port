@@ -1,9 +1,9 @@
 # RFC-017: Spade .NET Natural Neighbor – Fast Algorithm & Next Steps
 
-**Status:** Draft  
-**Phase:** Post-robustness (RFC-016), pre-optimisation/thread-safety  
-**Scope:** `spade-port/dotnet/src/Spade/NaturalNeighborInterpolator.cs` and grid helpers under `Spade.Advanced.Interpolation`  
-**Complexity:** ⭐⭐⭐ Medium  
+**Status:** Draft
+**Phase:** Post-robustness (RFC-016), pre-optimisation/thread-safety
+**Scope:** `spade-port/dotnet/src/Spade/NaturalNeighborInterpolator.cs` and grid helpers under `Spade.Advanced.Interpolation`
+**Complexity:** ⭐⭐⭐ Medium
 **Dependencies:** RFC-009 (validation with Julia oracle), RFC-011 (robust predicates), RFC-016 (natural neighbor robustness)
 
 ---

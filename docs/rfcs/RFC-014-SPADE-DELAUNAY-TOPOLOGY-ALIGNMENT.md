@@ -1,9 +1,9 @@
 # RFC-014: Spade .NET Delaunay Topology Alignment
 
-**Status:** Draft  
-**Phase:** Post-DCEL realignment / topology parity  
-**Scope:** `spade-port/dotnet/src/Spade` Delaunay core + topology tests in `Spade.Tests`  
-**Complexity:** ⭐⭐⭐⭐ Hard  
+**Status:** Draft
+**Phase:** Post-DCEL realignment / topology parity
+**Scope:** `spade-port/dotnet/src/Spade` Delaunay core + topology tests in `Spade.Tests`
+**Complexity:** ⭐⭐⭐⭐ Hard
 **Dependencies:** RFC-012 (Port Completion), RFC-013 (DCEL & Hull Realignment)
 
 ---
@@ -220,10 +220,9 @@ To align behaviour, we will:
 
 This RFC is considered **complete** when:
 
-1. The adjacency/topology tests for 3×3 grid and rectangle-with-center all pass.  
-2. There are no known mismatches between C# Spade and Rust spade / NTS for the explicitly tested configurations.  
-3. All previous green tests (including refinement and natural neighbor tests) remain green.  
+1. The adjacency/topology tests for 3×3 grid and rectangle-with-center all pass.
+2. There are no known mismatches between C# Spade and Rust spade / NTS for the explicitly tested configurations.
+3. All previous green tests (including refinement and natural neighbor tests) remain green.
 4. Any remaining minor differences (if unavoidable) are documented in RFCs or comments in the tests.
 
 Once complete, RFC-014, together with RFC-013 and RFC-012, will bring the Delaunay triangulation topology and behaviour of the C# port in line with the Rust reference for the scenarios we care about.
-

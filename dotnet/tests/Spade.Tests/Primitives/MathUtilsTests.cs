@@ -11,7 +11,7 @@ public class MathUtilsTests
     {
         var from = new Point2<double>(1.0, 1.0);
         var to = new Point2<double>(4.0, 5.0);
-        
+
         var projection = MathUtils.ProjectPoint(from, to, from);
         projection.IsBeforeEdge.Should().BeFalse();
         projection.IsBehindEdge.Should().BeFalse();

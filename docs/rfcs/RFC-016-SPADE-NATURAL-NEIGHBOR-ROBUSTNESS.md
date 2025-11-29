@@ -1,9 +1,9 @@
 # RFC-016: Spade .NET Natural Neighbor Robustness
 
-**Status:** Completed  
-**Phase:** Post-topology alignment / interpolation correctness  
-**Scope:** `spade-port/dotnet/src/Spade/NaturalNeighborInterpolator.cs` and related tests  
-**Complexity:** ⭐⭐⭐ Medium–Hard  
+**Status:** Completed
+**Phase:** Post-topology alignment / interpolation correctness
+**Scope:** `spade-port/dotnet/src/Spade/NaturalNeighborInterpolator.cs` and related tests
+**Complexity:** ⭐⭐⭐ Medium–Hard
 **Dependencies:** RFC-012, RFC-013, RFC-014, RFC-015
 
 ---
@@ -176,9 +176,9 @@ We will:
 
 This RFC is considered **complete** when:
 
-1. `InterpolationTests.NaturalNeighbor_SlopeField_MatchesExpectedXWithinHull` and `GradientInterpolationTests.InterpolateGradient_UsingEstimatedGradients_MatchesPlanarField` both pass.  
-2. For interior queries in those tests, natural neighbour interpolation never returns `null` (it may fall back to barycentric when necessary).  
-3. No new failures are introduced in other interpolation or topology tests.  
+1. `InterpolationTests.NaturalNeighbor_SlopeField_MatchesExpectedXWithinHull` and `GradientInterpolationTests.InterpolateGradient_UsingEstimatedGradients_MatchesPlanarField` both pass.
+2. For interior queries in those tests, natural neighbour interpolation never returns `null` (it may fall back to barycentric when necessary).
+3. No new failures are introduced in other interpolation or topology tests.
 4. Any known remaining edge cases (e.g., on the hull boundary) are documented in comments or related RFCs.
 
 ---

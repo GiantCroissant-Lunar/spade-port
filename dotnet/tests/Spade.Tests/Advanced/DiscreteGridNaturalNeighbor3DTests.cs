@@ -30,7 +30,7 @@ public class DiscreteGridNaturalNeighbor3DTests
         }
 
         var min = new Point3<double>(-1.0, -1.0, -1.0);
-        var max = new Point3<double>( 1.0,  1.0,  1.0);
+        var max = new Point3<double>(1.0, 1.0, 1.0);
 
         var nx = 15;
         var ny = 15;
@@ -73,7 +73,7 @@ public class DiscreteGridNaturalNeighbor3DTests
         }
 
         var min = new Point3<double>(-1.0, -1.0, -1.0);
-        var max = new Point3<double>( 1.0,  1.0,  1.0);
+        var max = new Point3<double>(1.0, 1.0, 1.0);
 
         var nx = 41;
         var ny = 41;

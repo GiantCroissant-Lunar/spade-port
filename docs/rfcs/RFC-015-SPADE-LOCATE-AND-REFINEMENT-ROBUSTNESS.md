@@ -1,9 +1,9 @@
 # RFC-015: Spade .NET Locate & Refinement Robustness
 
-**Status:** Completed  
-**Phase:** Post-DCEL / topology alignment  
-**Scope:** `spade-port/dotnet/src/Spade/TriangulationBase.cs`, `MeshRefinementExtensions.cs`, and related tests  
-**Complexity:** ⭐⭐⭐⭐ Hard  
+**Status:** Completed
+**Phase:** Post-DCEL / topology alignment
+**Scope:** `spade-port/dotnet/src/Spade/TriangulationBase.cs`, `MeshRefinementExtensions.cs`, and related tests
+**Complexity:** ⭐⭐⭐⭐ Hard
 **Dependencies:** RFC-012, RFC-013, RFC-014
 
 ---
@@ -178,9 +178,9 @@ Two interacting issues must be addressed:
 
 This RFC is considered **complete** when:
 
-1. `Refine_WithAngleLimit_RefinesEvenWithoutAreaConstraint` passes without exceptions.  
-2. `BruteForceLocate` and `LocateWithHintFixedCore` no longer throw for any tests in `Spade.Tests`.  
-3. No new failures appear in the existing refinement, topology, or interpolation tests.  
+1. `Refine_WithAngleLimit_RefinesEvenWithoutAreaConstraint` passes without exceptions.
+2. `BruteForceLocate` and `LocateWithHintFixedCore` no longer throw for any tests in `Spade.Tests`.
+3. No new failures appear in the existing refinement, topology, or interpolation tests.
 4. Any remaining known limitations (if any) are documented in comments or related RFCs.
 
 ---

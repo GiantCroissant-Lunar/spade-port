@@ -126,7 +126,7 @@ No changes required to the **goals or structure** of the core port. All existing
 
 ### Validation (RFC-009)
 
-- Validation helpers that are 
+- Validation helpers that are
   - **Internals for core correctness** should live in `Spade` or in internal test projects.
   - **High-level validation utilities** (e.g., rich diagnostics, Oracle comparison helpers) may live in `Spade.Advanced.Validation` or in dedicated test projects.
 

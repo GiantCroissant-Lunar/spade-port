@@ -1,6 +1,6 @@
 # Handover: Spade Voronoi issues in Fantasy Map Generator port
 
-**Audience:** Agent working on `dotnet/_lib/spade-port`  
+**Audience:** Agent working on `dotnet/_lib/spade-port`
 **Goal:** Make the Spade Voronoi backend robust enough that the FMG port can use it instead of the current NTS fallback, without changing public Voronoi / map contracts.
 
 ---
@@ -9,9 +9,9 @@
 
 The Fantasy Map Generator .NET port (`dotnet/_lib/fantasy-map-generator-port`) has two Voronoi backends:
 
-- **NTS backend** – implemented in `FantasyMapGenerator.Core/Geometry/Voronoi.cs`  
+- **NTS backend** – implemented in `FantasyMapGenerator.Core/Geometry/Voronoi.cs`
   - Works correctly and is used as the current reference.
-- **Spade backend** – implemented in `FantasyMapGenerator.Core/Geometry/SpadeAdapter.cs`  
+- **Spade backend** – implemented in `FantasyMapGenerator.Core/Geometry/SpadeAdapter.cs`
   - Produces **severe visual artifacts** when used from FMG:
     - When rendered with a debug overlay, Voronoi cells become a dense **“hairball”** of long chords across the map instead of clean polygon rings.
     - Neighbor counts / basic stats still look plausible, so the issue is geometric, not purely topological.
@@ -24,7 +24,7 @@ Because of this, the FMG game-side provider (`PigeonPea.Plugin.Map.FMG/FmgMapPro
 
 Use the dedicated FMG PNG export tool – this avoids the game HUD and isolates the backend:
 
-**Project:**  
+**Project:**
 `dotnet/_lib/fantasy-map-generator-port/dotnet/tools/FmgExportPng`
 
 1. Open `Program.cs` in that project.
@@ -240,7 +240,7 @@ While implementing the above in `SpadeAdapter.GenerateVoronoi`:
 Once you’ve implemented the fix in `SpadeAdapter`:
 
 1. **Rebuild and run FmgExportPng** with `VoronoiBackend.Spade`.
-2. Generate a PNG for a fixed seed (e.g. `Seed = 123456`).  
+2. Generate a PNG for a fixed seed (e.g. `Seed = 123456`).
    - Compare visually to the NTS backend:
      - Terrain: should already match (heightmap bug was previously fixed).
      - Voronoi overlay: cells should look like a typical Voronoi diagram, not a hairball.
@@ -262,4 +262,3 @@ Once you’ve implemented the fix in `SpadeAdapter`:
   - `FMG-RIVER-ISSUE-ANALYSIS.md`
 
 If you have to choose between a simpler but slightly approximate solution (e.g. bounding rectangle with mild distortion near the edges) and a complex exact clipper, **prefer the simpler, reliable one**. The user cares most about having a clean, understandable Voronoi structure that matches the overall FMG look.
-

@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Spade\Spade.csproj" />
     <ProjectReference Include="..\..\src\Spade.Advanced\Spade.Advanced.csproj" />
+    <ProjectReference Include="..\..\..\ref-projects\voronator-sharp\src\VoronatorSharp\VoronatorSharp.csproj" />
   </ItemGroup>
 
 </Project>

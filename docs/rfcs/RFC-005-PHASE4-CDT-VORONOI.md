@@ -1,10 +1,10 @@
 # RFC-005: Phase 4 - Constrained Delaunay & Voronoi
 
-**Status:** Draft  
-**Phase:** 4 of 5  
-**Duration:** Week 4 (5-7 days)  
-**Complexity:** ⭐⭐ Medium  
-**Dependencies:** Phase 2 (RFC-003), Phase 3 (RFC-004)  
+**Status:** Draft
+**Phase:** 4 of 5
+**Duration:** Week 4 (5-7 days)
+**Complexity:** ⭐⭐ Medium
+**Dependencies:** Phase 2 (RFC-003), Phase 3 (RFC-004)
 
 ---
 
@@ -196,10 +196,10 @@ public void Voronoi_VerticesAreCircumcenters()
 
 ## Success Criteria
 
-✅ Can add constraint edges  
-✅ Constraints preserved during refinement  
-✅ Voronoi extraction works  
-✅ Infinite rays handled correctly  
+✅ Can add constraint edges
+✅ Constraints preserved during refinement
+✅ Voronoi extraction works
+✅ Infinite rays handled correctly
 ✅ All tests passing (30+ tests)
 
 ---

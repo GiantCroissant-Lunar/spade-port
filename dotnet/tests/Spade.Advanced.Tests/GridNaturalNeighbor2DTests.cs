@@ -23,7 +23,7 @@ public class GridNaturalNeighbor2DTests
         var sampleValues = new List<double> { h, h, h, h };
 
         var min = new Point2<double>(-1.0, -1.0);
-        var max = new Point2<double>( 1.0,  1.0);
+        var max = new Point2<double>(1.0, 1.0);
 
         var grid = NaturalNeighborGrid2D.Exact(
             samplePoints,
@@ -57,7 +57,7 @@ public class GridNaturalNeighbor2DTests
         var sampleValues = new List<double> { h, h, h, h };
 
         var min = new Point2<double>(-1.0, -1.0);
-        var max = new Point2<double>( 1.0,  1.0);
+        var max = new Point2<double>(1.0, 1.0);
 
         var grid = NaturalNeighborGrid2D.Discrete(
             samplePoints,

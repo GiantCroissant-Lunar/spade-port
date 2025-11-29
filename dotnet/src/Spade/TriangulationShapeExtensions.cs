@@ -270,4 +270,3 @@ public static class TriangulationShapeExtensions
         }
     }
 }
-
