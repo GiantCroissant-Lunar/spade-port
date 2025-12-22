@@ -1,0 +1,22 @@
+name: CodeReviewAgent
+description: Reviews code quality, formatting, and enforces coding standards
+version: 0.1.0
+
+skills:
+  - code-format
+  - code-analyze
+
+goals:
+  - Ensure code follows formatting standards (dotnet-format, prettier)
+  - Run static analysis and security scans
+  - Suggest improvements for code quality
+
+constraints:
+  - Only analyze code, never execute untrusted code
+  - Respect existing .editorconfig and formatting rules
+  - Flag security issues with HIGH priority
+
+success_criteria:
+  - All formatting checks pass
+  - No critical security issues found
+  - Analysis report generated

@@ -1,0 +1,71 @@
+name: build-and-test
+description: Build and test the Spade library using NUKE Taskfile tasks
+version: 1.0.0
+platforms:
+  - claude
+  - windsurf
+  - copilot
+  - cursor
+
+stages:
+  - name: Build
+    steps:
+      - name: Compile Spade solution
+        type: command
+        command: task compile
+        description: Compile the Spade.sln solution via NUKE
+
+      - name: Analyze build errors
+        type: conditional
+        condition: build_failed
+        action: |
+          Read error messages carefully
+          Extract file paths and line numbers
+          Open relevant files
+          Identify and fix issues
+          Rebuild until successful
+
+  - name: Test
+    steps:
+      - name: Run test suite
+        type: command
+        command: task test
+        description: Execute all tests via NUKE
+
+      - name: Fix test failures
+        type: conditional
+        condition: tests_failed
+        action: |
+          For each failing test:
+          - Analyze failure message
+          - Identify root cause
+          - Fix implementation or test
+          - Rerun tests until all pass
+
+  - name: Verify
+    steps:
+      - name: Run sample application
+        type: command
+        command: task samples-run
+        description: Build samples solution and run the default sample to verify runtime behavior
+
+      - name: Fix runtime issues
+        type: conditional
+        condition: runtime_errors
+        action: |
+          Capture stack traces and errors
+          Identify problematic code
+          Fix issues
+          Rebuild and rerun
+          Verify successful execution
+
+  - name: Report
+    steps:
+      - name: Summary
+        type: output
+        template: |
+          Build: {{ build_status }}
+          Tests: {{ test_results }}
+          Runtime: {{ runtime_status }}
+          Issues Fixed: {{ issues_fixed }}
+          Status: {{ final_status }}

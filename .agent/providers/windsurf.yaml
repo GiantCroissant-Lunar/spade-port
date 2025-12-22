@@ -1,0 +1,67 @@
+name: WindsurfProvider
+platform: windsurf
+version: 0.1.0
+
+capabilities:
+  context_window: 128000
+  supports_mcp: true
+  supports_tools: true
+  max_tool_calls: 30
+  model: gpt-5.1
+
+preferences:
+  verbosity: concise
+  code_format: markdown
+  error_handling: autonomous
+  thinking_process: minimal
+  autonomy_level: high
+
+hints:
+  - 'ALWAYS build and run applications yourself - never ask user to do it'
+  - 'Execute commands, capture output, analyze errors autonomously'
+  - 'Fix issues yourself by reading logs and making corrections'
+  - 'Only ask user for design decisions or when truly stuck'
+  - 'Chain commands efficiently: build -> run -> analyze -> fix -> repeat'
+  - 'Use Task runner for build/run operations: task game:build-and-run-console'
+  - 'Leverage MCP servers for filesystem, git, and build operations when available'
+  - 'Build console app: task game:build-console'
+  - 'Run console app: task game:run-console'
+  - 'Build and run: task game:build-and-run-console'
+  - 'For .NET solution: task dotnet:build, task dotnet:test, task dotnet:format'
+
+build_and_run:
+  build_console: 'task game:build-console'
+  run_console: 'task game:run-console'
+  build_and_run_console: 'task game:build-and-run-console'
+  build_solution: 'task dotnet:build'
+  test_solution: 'task dotnet:test'
+  format_code: 'task dotnet:format'
+  list_tasks: 'task --list'
+
+autonomous_workflow:
+  - 'Build the project and capture any build errors'
+  - 'If build fails: read error, identify issue, fix code, rebuild'
+  - 'If build succeeds: run the application'
+  - 'Capture runtime output and errors'
+  - 'If runtime errors: analyze stack trace, identify root cause, fix code, rebuild and rerun'
+  - 'Iterate until application runs successfully'
+  - 'Show final status to user with summary'
+
+skill_execution:
+  - 'Execute build and run commands directly'
+  - 'Parse compiler and runtime errors autonomously'
+  - 'Use file tools to read and fix problematic code'
+  - 'Verify fixes by rebuilding and rerunning'
+
+optimization:
+  - 'Use incremental builds when possible'
+  - 'Read only files mentioned in error messages'
+  - 'Fix multiple related errors in one pass'
+  - 'Cache successful build configurations'
+
+error_handling:
+  - 'Parse .NET compiler errors (CS####) and warnings'
+  - 'Extract file paths and line numbers from errors'
+  - 'Read relevant files and fix issues'
+  - 'Handle common errors: missing usings, type mismatches, null references'
+  - 'For runtime errors: analyze stack traces, identify root cause'

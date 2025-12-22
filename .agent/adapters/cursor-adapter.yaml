@@ -1,0 +1,63 @@
+name: CursorAdapter
+platform: cursor
+version: 1.0.0
+type: coding_assistant
+
+description: Adapter for Cursor AI editor
+
+capabilities:
+  - code_generation
+  - code_editing
+  - debugging
+  - testing
+  - documentation
+  - refactoring
+  - command_execution
+  - file_operations
+  - git_operations
+  - mcp_integration
+
+configuration:
+  rules_file: .cursorrules
+  rules_dir: .cursor/rules/
+  workflows_dir: .cursor/workflows/
+  provider_config: .agent/providers/cursor.yaml
+
+workflow_format:
+  type: cursorrules
+  extension: .cursorrules
+  structure: |
+    @workflow name
+    @description text
+    @stage name
+      @run command
+      @step description
+      @auto-fix true
+
+invocation:
+  workflows: "@workflow-name or /workflow-name"
+  rules: Loaded from .cursorrules
+  commands: Execute via Cursor tools
+
+features:
+  autonomous: high
+  context_aware: true
+  multi_file_editing: true
+  mcp_support: true
+  composer_mode: true
+  model: varies
+  context_window: varies
+
+integration:
+  command: |
+    # Workflows generated from canonical YAML
+    python scripts/generate-workflows.py --platform cursor
+
+    # Rules in .cursorrules file
+
+  verification: |
+    # Check workflow files
+    ls .cursor/workflows/
+
+    # Test in Cursor
+    # Use @workflow-name in Cursor chat

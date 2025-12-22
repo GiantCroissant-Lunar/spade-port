@@ -1,0 +1,33 @@
+name: CopilotProvider
+platform: copilot
+version: 0.1.0
+
+capabilities:
+  context_window: 128000
+  supports_mcp: true
+  supports_tools: true
+  max_tool_calls: 30
+  max_output_tokens: 4096
+
+preferences:
+  verbosity: concise
+  code_format: markdown
+  error_handling: concise
+  thinking_process: hidden
+
+hints:
+  - 'Keep responses focused and actionable'
+  - 'Prioritize code snippets over explanations'
+  - 'Use GitHub-specific tools when available'
+  - 'Leverage MCP servers for git, filesystem, and build operations'
+  - 'Minimize token usage for faster responses'
+
+skill_execution:
+  - 'Load only necessary context'
+  - 'Prefer direct execution over explanation'
+  - 'Surface errors quickly for rapid iteration'
+
+optimization:
+  - 'Batch file operations when possible'
+  - 'Use targeted file reads (line ranges)'
+  - 'Minimize repeated tool calls'

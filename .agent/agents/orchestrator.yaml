@@ -1,0 +1,38 @@
+# Orchestrator Agent
+# Top-level routing agent that delegates user requests to specialized sub-agents
+# based on task intent analysis
+
+name: Orchestrator
+description: Top-level router that delegates to sub-agents based on task intent
+version: 0.1.0
+
+# Sub-agents available for delegation
+# Each sub-agent specializes in a specific domain of work
+subagents:
+  - DotNetBuildAgent # Handles .NET build, restore, compile, and packaging
+  - CodeReviewAgent # Handles code formatting, analysis, and quality checks
+  - TestingAgent # Handles test execution, coverage, and benchmarks
+
+# Routing rules for delegating tasks to appropriate sub-agents
+# Rules are evaluated in order; first match wins
+routing:
+  rules:
+    # Build-related tasks → DotNetBuildAgent
+    # Triggered by keywords: build, compile, restore, nuke
+    - if: "task contains 'build' or 'compile' or 'restore' or 'nuke'"
+      to: DotNetBuildAgent
+
+    # Test-related tasks → TestingAgent
+    # Triggered by keywords: test, coverage, benchmark
+    - if: "task contains 'test' or 'coverage' or 'benchmark'"
+      to: TestingAgent
+
+    # Code quality and general coding tasks → CodeReviewAgent
+    # Triggered by keywords: review, format, lint, analyze, quality, refactor, code, implement, fix
+    - if: "task contains 'review' or 'format' or 'lint' or 'analyze' or 'quality' or 'refactor' or 'code' or 'implement' or 'fix'"
+      to: CodeReviewAgent
+
+
+  # Fallback agent when no routing rule matches
+  # CodeReviewAgent handles general coding tasks by default
+  fallback: CodeReviewAgent

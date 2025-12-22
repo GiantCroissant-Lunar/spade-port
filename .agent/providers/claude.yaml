@@ -1,0 +1,33 @@
+name: ClaudeProvider
+platform: claude
+version: 0.1.0
+
+capabilities:
+  context_window: 200000
+  supports_mcp: true
+  supports_tools: true
+  max_tool_calls: 50
+  max_output_tokens: 4096
+
+preferences:
+  verbosity: normal
+  code_format: markdown
+  error_handling: detailed
+  thinking_process: visible
+
+hints:
+  - 'Use extended thinking for complex problems'
+  - 'Leverage MCP servers for Git, filesystem, and external APIs'
+  - 'Batch independent tool calls for efficiency'
+  - 'Use sequential thinking tool for multi-step reasoning'
+  - 'Surface reasoning and trade-offs in responses'
+
+skill_execution:
+  - 'Load skill entry file first (SKILL.md)'
+  - 'Only load reference files when specific procedure needed'
+  - 'Progressive disclosure: start minimal, expand as needed'
+
+optimization:
+  - 'Prefer parallel tool calls for independent operations'
+  - 'Cache frequently accessed files in working memory'
+  - 'Use git diff before full file reads when checking changes'

@@ -1,0 +1,50 @@
+name: GeminiProvider
+platform: gemini
+version: 0.1.0
+
+capabilities:
+  context_window: 1000000
+  supports_mcp: true
+  supports_tools: true
+  max_tool_calls: 100
+  max_output_tokens: 8192
+  multimodal: true
+  grounding: true
+  code_execution: true
+
+preferences:
+  verbosity: normal
+  code_format: markdown
+  error_handling: detailed
+  thinking_process: visible
+  use_grounding: false  # Enable when needed for web search
+  use_code_execution: false  # Enable when needed for running code
+
+hints:
+  - 'Leverage 1M token context window for large codebases'
+  - 'Use extended thinking for complex architectural decisions'
+  - 'Batch independent tool calls for efficiency'
+  - 'Use multimodal input for diagrams and screenshots when helpful'
+  - 'Enable grounding for researching external APIs or libraries'
+  - 'Surface reasoning and trade-offs in responses'
+  - 'Use code execution for validating complex logic'
+
+skill_execution:
+  - 'Load skill entry file first (SKILL.md)'
+  - 'Only load reference files when specific procedure needed'
+  - 'Progressive disclosure: start minimal, expand as needed'
+  - 'Leverage large context window to keep full codebase in memory'
+
+optimization:
+  - 'Prefer parallel tool calls for independent operations'
+  - 'Use large context window to avoid repeated file reads'
+  - 'Cache frequently accessed files in working memory'
+  - 'Use git diff before full file reads when checking changes'
+  - 'Batch related operations to minimize tool call overhead'
+
+gemini_specific:
+  - 'Use thinking mode for multi-step reasoning'
+  - 'Enable grounding when researching unfamiliar libraries'
+  - 'Use code execution to validate complex algorithms'
+  - 'Leverage multimodal for understanding architecture diagrams'
+  - 'Take advantage of 1M context for full project analysis'

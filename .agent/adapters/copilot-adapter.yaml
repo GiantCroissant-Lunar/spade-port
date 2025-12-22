@@ -1,0 +1,61 @@
+name: CopilotAdapter
+platform: copilot
+version: 1.0.0
+type: coding_assistant
+
+description: Adapter for GitHub Copilot and Copilot Chat
+
+capabilities:
+  - code_generation
+  - code_completion
+  - code_editing
+  - debugging
+  - testing
+  - documentation
+  - refactoring
+  - git_operations
+  - mcp_integration
+
+configuration:
+  instructions_file: .github/copilot-instructions.md
+  workflows_dir: .github/copilot-workflows/
+  provider_config: .agent/providers/copilot.yaml
+
+workflow_format:
+  type: markdown
+  extension: .md
+  structure: |
+    # Workflow: name
+    Description
+    When I say `/workflow-name`
+    ## Stage
+    - Run: `command`
+    - Step: description
+
+invocation:
+  workflows: /workflow-name
+  instructions: Loaded automatically from .github/copilot-instructions.md
+  commands: Execute via GitHub Copilot tools
+
+features:
+  autonomous: moderate
+  context_aware: true
+  multi_file_editing: true
+  mcp_support: true
+  model: gpt-4
+  context_window: 128000
+  github_integration: true
+
+integration:
+  command: |
+    # Workflows generated from canonical YAML
+    python scripts/generate-workflows.py --platform copilot
+
+    # Instructions in .github/copilot-instructions.md
+
+  verification: |
+    # Check workflow files
+    ls .github/copilot-workflows/
+
+    # Test in GitHub Copilot Chat
+    /workflow-name in VS Code Copilot chat

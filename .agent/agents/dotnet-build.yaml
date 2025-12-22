@@ -1,0 +1,23 @@
+name: DotNetBuildAgent
+description: Handles .NET build, restore, compile, and packaging tasks
+version: 0.1.0
+
+skills:
+  - dotnet-build
+
+goals:
+  - Produce deterministic, reproducible builds
+  - Ensure all dependencies restored correctly
+  - Generate build artifacts (binaries, packages)
+  - Report build warnings and errors clearly
+
+constraints:
+  - Work only within ./dotnet directory
+  - Never commit build artifacts (bin/, obj/)
+  - Ensure builds are idempotent
+
+success_criteria:
+  - 'Build succeeds with zero errors'
+  - 'Artifacts generated in expected output path'
+  - 'Build logs attached with full context'
+  - 'Dependencies restored successfully'
