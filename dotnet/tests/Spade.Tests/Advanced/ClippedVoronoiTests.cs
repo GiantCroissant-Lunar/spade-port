@@ -29,9 +29,7 @@ public class ClippedVoronoiTests
         var diagram = ClippedVoronoiBuilder.ClipToPolygon(triangulation, domain);
 
         diagram.Should().NotBeNull();
-        // Depending on triangulation topology, some or all Voronoi cells may be unbounded
-        // and currently skipped by the simple polygon extraction. When cells are present,
-        // they must be valid polygons fully contained in the domain.
+        diagram.Cells.Count.Should().Be(4);
 
         foreach (var cell in diagram.Cells)
         {
@@ -42,16 +40,21 @@ public class ClippedVoronoiTests
                 PointInsideConvexPolygon(p, domain.Vertices).Should().BeTrue();
             }
         }
+
+        // Cells should partition the domain (within tolerance).
+        var sumArea = diagram.Cells.Sum(c => PolygonArea(c.Polygon));
+        var domainArea = PolygonArea(domain.Vertices);
+        sumArea.Should().BeApproximately(domainArea, domainArea * 1e-6);
     }
 
     [Fact]
     public void ClipToPolygon_SetsIsClipped_WhenDomainIsSmall()
     {
         var triangulation = new DelaunayTriangulation<Point2<double>, int, int, int, LastUsedVertexHintGenerator<double>>();
-        triangulation.Insert(new Point2<double>(-5, 0));
-        triangulation.Insert(new Point2<double>(5, 0));
-        triangulation.Insert(new Point2<double>(0, -5));
-        triangulation.Insert(new Point2<double>(0, 5));
+        triangulation.Insert(new Point2<double>(-0.5, 0));
+        triangulation.Insert(new Point2<double>(0.5, 0));
+        triangulation.Insert(new Point2<double>(0, -0.5));
+        triangulation.Insert(new Point2<double>(0, 0.5));
         triangulation.Insert(new Point2<double>(0, 0));
 
         var smallDomain = new ClipPolygon(new[]
@@ -64,11 +67,8 @@ public class ClippedVoronoiTests
 
         var diagram = ClippedVoronoiBuilder.ClipToPolygon(triangulation, smallDomain);
 
-        // If any cells are produced, at least one should be clipped by the small domain.
-        if (diagram.Cells.Count > 0)
-        {
-            diagram.Cells.Any(c => c.IsClipped).Should().BeTrue();
-        }
+        diagram.Cells.Count.Should().Be(5);
+        diagram.Cells.Any(c => c.IsClipped).Should().BeTrue();
     }
 
     private static bool PointInsideConvexPolygon(Point2<double> p, System.Collections.Generic.IReadOnlyList<Point2<double>> polygon)
@@ -85,5 +85,22 @@ public class ClippedVoronoiTests
             }
         }
         return true;
+    }
+
+    private static double PolygonArea(System.Collections.Generic.IReadOnlyList<Point2<double>> polygon)
+    {
+        if (polygon.Count < 3)
+        {
+            return 0;
+        }
+
+        double sum = 0;
+        for (int i = 0; i < polygon.Count; i++)
+        {
+            var a = polygon[i];
+            var b = polygon[(i + 1) % polygon.Count];
+            sum += a.X * b.Y - b.X * a.Y;
+        }
+        return System.Math.Abs(sum) / 2.0;
     }
 }
