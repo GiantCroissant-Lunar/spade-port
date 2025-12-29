@@ -22,6 +22,12 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         _hintGenerator = new L();
     }
 
+    public TriangulationBase(int estimatedVertexCapacity, int estimatedEdgeCapacity, int estimatedFaceCapacity)
+    {
+        _dcel = new Dcel<V, DE, UE, F>(estimatedVertexCapacity, estimatedEdgeCapacity, estimatedFaceCapacity);
+        _hintGenerator = new L();
+    }
+
     public int NumVertices => _dcel.NumVertices;
     public int NumFaces => _dcel.NumFaces;
     public int NumUndirectedEdges => _dcel.NumUndirectedEdges;
@@ -104,6 +110,110 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
 
         _hintGenerator.NotifyVertexInserted(result, position);
         return result;
+    }
+
+    /// <summary>
+    /// Preallocates capacity in internal DCEL structures to minimize resizing during bulk insertion.
+    /// </summary>
+    /// <param name="estimatedVertexCount">Estimated number of vertices to be inserted</param>
+    public void PreallocateForBulkInsert(int estimatedVertexCount)
+    {
+        if (estimatedVertexCount <= 0) return;
+
+        // Euler's formula for planar graphs: V - E + F = 2
+        // For Delaunay triangulations: E ≈ 3V - 6, F ≈ 2V - 4
+        // We add some buffer for safety
+        var estimatedEdges = Math.Max(0, 3 * estimatedVertexCount - 6) + 10;
+        var estimatedFaces = Math.Max(0, 2 * estimatedVertexCount - 4) + 10;
+
+        // Calculate target capacities
+        var targetVertexCapacity = _dcel.NumVertices + estimatedVertexCount;
+        var targetEdgeCapacity = _dcel.NumUndirectedEdges + estimatedEdges;
+        var targetFaceCapacity = _dcel.NumFaces + estimatedFaces;
+
+        // Use DCEL's EnsureCapacity methods
+        _dcel.EnsureVertexCapacity(targetVertexCapacity);
+        _dcel.EnsureEdgeCapacity(targetEdgeCapacity);
+        _dcel.EnsureFaceCapacity(targetFaceCapacity);
+    }
+
+    /// <summary>
+    /// Optimizes the hint generator for bulk operations by providing spatial locality hints.
+    /// </summary>
+    public void OptimizeHintGeneratorForBulk()
+    {
+        // For bulk operations, we can optimize the hint generator by:
+        // 1. Using a more spatially-aware hint when we have multiple vertices
+        // 2. Caching the centroid of existing vertices for better initial hints
+        
+        if (NumVertices == 0) return;
+        
+        // If we have a LastUsedVertexHintGenerator, we can optimize it for bulk operations
+        if (_hintGenerator is LastUsedVertexHintGenerator<double> lastUsedGenerator)
+        {
+            // For bulk operations, start with a vertex closer to the center of the triangulation
+            // This provides better spatial locality for subsequent insertions
+            var centerVertex = FindCentralVertex();
+            if (centerVertex.HasValue)
+            {
+                // Notify the hint generator to use this central vertex as the starting point
+                lastUsedGenerator.NotifyVertexLookup(centerVertex.Value);
+            }
+        }
+        
+        // Additional optimizations could include:
+        // - Pre-computing spatial partitions for very large bulk operations
+        // - Using different hinting strategies based on the spatial distribution
+        // - Caching spatial locality information between insertions
+        // For now, the central vertex optimization provides a good balance of simplicity and effectiveness
+    }
+    
+    /// <summary>
+    /// Finds a vertex that is approximately central to the existing triangulation.
+    /// This provides a good starting hint for bulk insertion operations.
+    /// </summary>
+    /// <returns>A vertex handle that is approximately central, or null if no vertices exist</returns>
+    private FixedVertexHandle? FindCentralVertex()
+    {
+        if (NumVertices == 0) return null;
+        if (NumVertices == 1) return new FixedVertexHandle(0);
+        
+        // Calculate the centroid of all vertices
+        var sumX = 0.0;
+        var sumY = 0.0;
+        var count = 0;
+        
+        for (int i = 0; i < NumVertices; i++)
+        {
+            var vertex = Vertex(new FixedVertexHandle(i));
+            var pos = vertex.Data.Position;
+            sumX += pos.X;
+            sumY += pos.Y;
+            count++;
+        }
+        
+        if (count == 0) return null;
+        
+        var centroid = new Point2<double>(sumX / count, sumY / count);
+        
+        // Find the vertex closest to the centroid
+        var closestVertex = new FixedVertexHandle(0);
+        var closestDistance = double.MaxValue;
+        
+        for (int i = 0; i < NumVertices; i++)
+        {
+            var vertex = Vertex(new FixedVertexHandle(i));
+            var pos = vertex.Data.Position;
+            var distance = (pos.Sub(centroid)).Length2(); // Use squared distance to avoid sqrt
+            
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestVertex = new FixedVertexHandle(i);
+            }
+        }
+        
+        return closestVertex;
     }
 
     private FixedVertexHandle InsertWithHintOptionImpl(VertexToInsert t, FixedVertexHandle? hint)

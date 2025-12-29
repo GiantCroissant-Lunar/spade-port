@@ -4,23 +4,65 @@ namespace Spade.DCEL;
 
 public class Dcel<V, DE, UE, F>
 {
-    internal List<VertexEntry<V>> Vertices { get; } = new();
-    internal List<FaceEntry<F>> Faces { get; } = new();
-    internal List<EdgeEntry<DE, UE>> Edges { get; } = new();
+    internal List<VertexEntry<V>> Vertices { get; }
+    internal List<FaceEntry<F>> Faces { get; }
+    internal List<EdgeEntry<DE, UE>> Edges { get; }
 
-    public Dcel()
+    public Dcel() : this(0, 0, 0)
     {
-        // Initialize with outer face?
+    }
+
+    public Dcel(int vertexCapacity, int edgeCapacity, int faceCapacity)
+    {
+        Vertices = new List<VertexEntry<V>>(vertexCapacity);
+        Faces = new List<FaceEntry<F>>(Math.Max(1, faceCapacity)); // At least 1 for outer face
+        Edges = new List<EdgeEntry<DE, UE>>(edgeCapacity);
+
+        // Initialize with outer face
         // Rust implementation calls dcel_operations::new() which likely creates the outer face.
-        // I'll need to check dcel_operations.rs or just initialize it here.
         // Based on dcel.rs: self.faces.truncate(1); // Keep outer face
         // So there is always at least one face (outer face).
-
         Faces.Add(new FaceEntry<F>
         {
             AdjacentEdge = null,
             Data = default!
         });
+    }
+
+    /// <summary>
+    /// Ensures the vertices collection has at least the specified capacity.
+    /// </summary>
+    /// <param name="capacity">Minimum capacity required</param>
+    public void EnsureVertexCapacity(int capacity)
+    {
+        if (Vertices.Capacity < capacity)
+        {
+            Vertices.Capacity = capacity;
+        }
+    }
+
+    /// <summary>
+    /// Ensures the edges collection has at least the specified capacity.
+    /// </summary>
+    /// <param name="capacity">Minimum capacity required</param>
+    public void EnsureEdgeCapacity(int capacity)
+    {
+        if (Edges.Capacity < capacity)
+        {
+            Edges.Capacity = capacity;
+        }
+    }
+
+    /// <summary>
+    /// Ensures the faces collection has at least the specified capacity.
+    /// </summary>
+    /// <param name="capacity">Minimum capacity required</param>
+    public void EnsureFaceCapacity(int capacity)
+    {
+        if (Faces.Capacity < capacity)
+        {
+            Faces.Capacity = capacity;
+        }
     }
 
     public int NumVertices => Vertices.Count;
