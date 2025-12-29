@@ -10,6 +10,7 @@ A .NET port of the [Rust Spade library](https://github.com/Stoeoef/spade) for hi
 
 ### Core (`Spade`)
 - **Delaunay Triangulation** - Incremental point insertion with robust geometric predicates
+- **Bulk Insertion API** - High-performance `Span<T>`-based API for inserting large point sets with zero allocations
 - **Constrained Delaunay Triangulation (CDT)** - Support for constraint edges with automatic splitting
 - **Voronoi Diagrams** - Dual graph extraction from Delaunay triangulation
 - **Mesh Refinement** - Ruppert's algorithm with angle and area constraints
@@ -21,7 +22,7 @@ A .NET port of the [Rust Spade library](https://github.com/Stoeoef/spade) for hi
 
 ### Advanced (`Spade.Advanced`)
 - **Power Diagrams** - Weighted Voronoi diagrams
-- **Clipped Voronoi** - Voronoi cells clipped to a bounding polygon
+- **Clipped Voronoi** - Voronoi cells clipped to a bounding polygon with deterministic ordering and diagnostics
 - **Centroidal Voronoi Relaxation** - Lloyd's algorithm for mesh smoothing
 
 ## Port Status
@@ -101,6 +102,25 @@ var result = cdt.Refine(parameters);
 Console.WriteLine($"Added {result.AddedVertices} Steiner points");
 ```
 
+### Bulk Insertion (High Performance)
+
+```csharp
+using Spade;
+using Spade.Primitives;
+
+var triangulation = new DelaunayTriangulation<Point2<double>>();
+
+// Generate or load large point set
+Span<Point2<double>> points = stackalloc Point2<double>[10000];
+for (int i = 0; i < points.Length; i++)
+{
+    points[i] = new Point2<double>(Random.Shared.NextDouble(), Random.Shared.NextDouble());
+}
+
+// Zero-allocation bulk insertion with optional spatial sorting
+triangulation.InsertBulk(points, useSpatialSort: true);
+```
+
 ## Project Structure
 
 ```
@@ -110,18 +130,35 @@ spade-port/
 │   │   ├── Spade/              # Core library
 │   │   └── Spade.Advanced/     # Power diagrams, clipped Voronoi
 │   └── tests/
-│       └── Spade.Tests/        # Unit and integration tests
-├── docs/                       # Documentation and RFCs
+│       └── Spade.Tests/        # Tests, benchmarks, and performance regression tests
+├── docs/
+│   ├── rfcs/                   # Request for Comments documents
+│   ├── specs/                  # Feature specifications
+│   ├── handovers/              # Project handover documentation
+│   └── reviews/                # Code review reports
 ├── build/                      # Build scripts (NUKE)
 └── oracle-tools/               # Rust oracle for validation testing
 ```
+
+## Performance
+
+Spade.NET includes comprehensive benchmarking infrastructure to measure and track performance:
+
+- **Bulk Insertion**: Optimized for large point sets (10k-200k+ points) with spatial sorting
+- **Zero Allocations**: `Span<T>`-based APIs eliminate GC pressure during bulk operations
+- **Benchmarking Suite**: BenchmarkDotNet-based performance tests with regression detection
+
+See [BENCHMARKS.md](dotnet/tests/Spade.Tests/BENCHMARKS.md) for detailed performance characteristics and how to run benchmarks.
 
 ## Documentation
 
 - [Usage Guide](docs/USAGE.md)
 - [Migration Guide](docs/MIGRATION.md)
 - [Known Differences from Rust](docs/KNOWN_DIFFERENCES.md)
-- [RFCs](docs/rfcs/)
+- [Performance Benchmarks](dotnet/tests/Spade.Tests/BENCHMARKS.md)
+- [Performance Characteristics](dotnet/tests/Spade.Tests/PERFORMANCE_CHARACTERISTICS.md)
+- [RFCs](docs/rfcs/) - Design documents and implementation plans
+- [Feature Specs](docs/specs/) - Detailed feature specifications
 
 ## Building
 
