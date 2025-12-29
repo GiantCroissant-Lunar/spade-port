@@ -6,6 +6,8 @@
     <!-- Test dependencies -->
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="FluentAssertions" Version="8.8.0" />
+    <PackageVersion Include="FsCheck" Version="3.0.0" />
+    <PackageVersion Include="FsCheck.Xunit" Version="3.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="NetTopologySuite" Version="2.5.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
