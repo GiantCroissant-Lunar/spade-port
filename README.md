@@ -32,15 +32,19 @@ The port is **~95% functionally complete** compared to the Rust original:
 | Feature | Status |
 |---------|--------|
 | Delaunay Triangulation | ✅ Complete |
+| Bulk Insertion API | ✅ Complete (Span-based, optimized for large point sets) |
 | Constrained Delaunay (CDT) | ✅ Complete |
 | Voronoi Diagrams | ✅ Complete |
+| Clipped Voronoi (Deterministic) | ✅ Complete (with ordering and diagnostics) |
 | Mesh Refinement | ✅ Complete |
 | Natural Neighbor Interpolation | ✅ Complete |
 | Spatial Queries | ✅ Functional (simplified algorithm) |
 | Robust Predicates | ✅ Complete |
 | Power Diagrams | ✅ Complete |
 | HierarchyHintGenerator | ⚠️ Not ported (performance feature) |
-| Circle-sweep Bulk Load | ⚠️ Not ported (performance feature) |
+| Circle-sweep Bulk Load | ⚠️ Not ported (Rust-specific algorithm) |
+
+**Note:** While Circle-sweep bulk load is not ported, we provide a high-performance bulk insertion API using `Span<T>` with spatial sorting and zero allocations, optimized for .NET.
 
 ## Quick Start
 
