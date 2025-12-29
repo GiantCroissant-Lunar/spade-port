@@ -9,6 +9,49 @@ namespace Spade.Advanced.Voronoi;
 
 public static class ClippedVoronoiBuilder
 {
+    /// <summary>
+    /// Clips a Voronoi diagram to a bounding domain polygon, producing cells in deterministic order.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Deterministic Ordering:</b>
+    /// </para>
+    /// <para>
+    /// Generators are processed in ascending index order (0, 1, 2, ...), ensuring that
+    /// the resulting cells are ordered by their GeneratorIndex. This allows downstream
+    /// consumers to reliably map cells back to their original input site array.
+    /// </para>
+    /// <para>
+    /// <b>Diagnostic Collections:</b>
+    /// </para>
+    /// <para>
+    /// The returned diagram includes diagnostic information about generators that did not
+    /// produce valid cells:
+    /// <list type="bullet">
+    /// <item><see cref="ClippedVoronoiDiagram{TVertex}.DegenerateCells"/>: Generator indices whose cells
+    /// became degenerate (fewer than 3 vertices) after clipping</item>
+    /// <item><see cref="ClippedVoronoiDiagram{TVertex}.OutsideDomain"/>: Generator indices that lie
+    /// entirely outside the clipping domain</item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// <b>Algorithm:</b>
+    /// </para>
+    /// <para>
+    /// For each generator, the cell is computed as the intersection of the domain polygon
+    /// with all half-planes defined by the bisectors between the generator and its Delaunay neighbors:
+    /// <c>Cell(p) ∩ Domain = Domain ∩ ⋂_{q in DelaunayNeighbors(p)} { x | |x-p| &lt;= |x-q| }</c>
+    /// </para>
+    /// </remarks>
+    /// <typeparam name="V">The vertex data type.</typeparam>
+    /// <typeparam name="DE">The directed edge data type.</typeparam>
+    /// <typeparam name="UE">The undirected edge data type.</typeparam>
+    /// <typeparam name="F">The face data type.</typeparam>
+    /// <typeparam name="L">The hint generator type.</typeparam>
+    /// <param name="triangulation">The Delaunay triangulation containing the generator sites.</param>
+    /// <param name="domain">The bounding domain polygon to clip cells to.</param>
+    /// <returns>A clipped Voronoi diagram with cells ordered by generator index.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if triangulation or domain is null.</exception>
     public static ClippedVoronoiDiagram<V> ClipToPolygon<V, DE, UE, F, L>(
         TriangulationBase<V, DE, UE, F, L> triangulation,
         ClipPolygon domain)
@@ -22,6 +65,8 @@ public static class ClippedVoronoiBuilder
         if (domain == null) throw new ArgumentNullException(nameof(domain));
 
         var resultCells = new List<ClippedVoronoiCell<V>>();
+        var degenerateCells = new List<int>();
+        var outsideDomain = new List<int>();
         var clipVertices = domain.Vertices;
 
         // The naive approach of extracting a Voronoi face polygon can yield <3 points for
@@ -45,10 +90,18 @@ public static class ClippedVoronoiBuilder
 
         var neighbors = BuildNeighborSets(triangulation, numVertices);
 
+        // Process generators in ascending index order (0, 1, 2, ...)
         for (var i = 0; i < numVertices; i++)
         {
             var generator = generators[i];
             var site = positions[i];
+
+            // Check if generator is outside the domain
+            if (!IsPointInsidePolygon(site, clipVertices))
+            {
+                outsideDomain.Add(i);
+                continue;
+            }
 
             var clippedPolygon = new List<Point2<double>>(clipVertices.Count);
             foreach (var v in clipVertices)
@@ -67,14 +120,43 @@ public static class ClippedVoronoiBuilder
 
             if (clippedPolygon.Count < 3)
             {
-                continue; // Fully outside domain or numerically degenerate.
+                // Cell became degenerate after clipping (fewer than 3 vertices)
+                degenerateCells.Add(i);
+                continue;
             }
 
             bool isClipped = PolygonTouchesDomainBoundary(clippedPolygon, clipVertices);
-            resultCells.Add(new ClippedVoronoiCell<V>(generator, clippedPolygon, isClipped));
+            resultCells.Add(new ClippedVoronoiCell<V>(generator, i, clippedPolygon, isClipped));
         }
 
-        return new ClippedVoronoiDiagram<V>(domain, resultCells);
+        return new ClippedVoronoiDiagram<V>(domain, resultCells, degenerateCells, outsideDomain);
+    }
+
+    /// <summary>
+    /// Determines whether a point is inside a polygon (assumes CCW winding).
+    /// </summary>
+    private static bool IsPointInsidePolygon(Point2<double> point, IReadOnlyList<Point2<double>> polygon)
+    {
+        const double eps = 1e-9;
+        int count = polygon.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            var a = polygon[i];
+            var b = polygon[(i + 1) % count];
+
+            // Cross product to determine which side of the edge the point is on
+            double cross = (b.X - a.X) * (point.Y - a.Y) - (b.Y - a.Y) * (point.X - a.X);
+
+            // For CCW polygon, inside is on the left (cross >= 0)
+            // Allow small epsilon for points on the boundary
+            if (cross < -eps)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static List<int>[] BuildNeighborSets<V, DE, UE, F, L>(
@@ -140,6 +222,47 @@ public static class ClippedVoronoiBuilder
         return vertices;
     }
 
+    /// <summary>
+    /// Clips a polygon to the half-plane containing points closer to <paramref name="site"/> than to <paramref name="neighbor"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Tie-Breaking Strategy:</b>
+    /// </para>
+    /// <para>
+    /// When a point lies exactly on the bisector line (equidistant from both site and neighbor),
+    /// the algorithm uses an epsilon-based tolerance (eps = 1e-9) to determine inclusion.
+    /// Points within epsilon of the bisector are considered "inside" the half-plane.
+    /// </para>
+    /// <para>
+    /// This epsilon-based approach provides deterministic tie-breaking because:
+    /// <list type="bullet">
+    /// <item>The evaluation function <c>Eval(x, y) = x*nx + y*ny - c</c> is computed identically for each point</item>
+    /// <item>Points with <c>Eval &lt;= eps</c> are included (inside or on boundary)</item>
+    /// <item>Points with <c>Eval &gt; eps</c> are excluded (outside)</item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// For points exactly on the bisector (within floating-point precision), the coordinate values
+    /// themselves serve as the implicit tie-breaker since the evaluation is deterministic for any
+    /// given (x, y) coordinate pair.
+    /// </para>
+    /// <para>
+    /// <b>Numerical Edge Cases:</b>
+    /// </para>
+    /// <para>
+    /// The algorithm handles near-degenerate cases through:
+    /// <list type="bullet">
+    /// <item>Epsilon tolerance (1e-9) for point classification to handle floating-point imprecision</item>
+    /// <item>Intersection computation uses a tighter epsilon (1e-15) to avoid division by near-zero</item>
+    /// <item>Duplicate point filtering (1e-12 tolerance) prevents degenerate polygon edges</item>
+    /// </list>
+    /// </para>
+    /// </remarks>
+    /// <param name="subjectPolygon">The polygon to clip.</param>
+    /// <param name="site">The site (generator) point defining the half-plane.</param>
+    /// <param name="neighbor">The neighboring site; the bisector is equidistant from site and neighbor.</param>
+    /// <returns>The clipped polygon containing only points closer to site than to neighbor.</returns>
     private static List<Point2<double>> ClipPolygonToBisectorHalfPlane(
         List<Point2<double>> subjectPolygon,
         Point2<double> site,
@@ -148,6 +271,9 @@ public static class ClippedVoronoiBuilder
         // Keep points closer to 'site' than to 'neighbor'.
         // Derived from |x-site|^2 <= |x-neighbor|^2 -> x·n <= c
         // where n = (neighbor - site) and c = (|neighbor|^2 - |site|^2)/2
+        //
+        // Tie-breaking: Points with Eval <= eps are considered inside.
+        // This provides deterministic behavior for points on or near the bisector.
         const double eps = 1e-9;
 
         if (subjectPolygon.Count == 0)
@@ -191,6 +317,20 @@ public static class ClippedVoronoiBuilder
         return output;
     }
 
+    /// <summary>
+    /// Computes the intersection point of a line segment with the bisector line.
+    /// </summary>
+    /// <remarks>
+    /// Uses a tight epsilon (1e-15) to detect near-parallel segments and avoid
+    /// division by near-zero denominators. This ensures numerical stability
+    /// while maintaining deterministic behavior.
+    /// </remarks>
+    /// <param name="s">Start point of the segment.</param>
+    /// <param name="e">End point of the segment.</param>
+    /// <param name="fs">Evaluation of start point against the bisector.</param>
+    /// <param name="fe">Evaluation of end point against the bisector.</param>
+    /// <param name="intersection">The computed intersection point, if found.</param>
+    /// <returns>true if a valid intersection was computed; false if the segment is parallel to the bisector.</returns>
     private static bool TryIntersectSegmentWithLine(
         Point2<double> s,
         Point2<double> e,
@@ -199,6 +339,7 @@ public static class ClippedVoronoiBuilder
         out Point2<double> intersection)
     {
         // Solve fs + t(fe - fs) = 0
+        // Uses tight epsilon to avoid division by near-zero while maintaining determinism
         const double eps = 1e-15;
         var denom = fs - fe;
         if (Math.Abs(denom) < eps)
@@ -214,6 +355,16 @@ public static class ClippedVoronoiBuilder
         return true;
     }
 
+    /// <summary>
+    /// Adds a point to the list if it is not a duplicate of the last point.
+    /// </summary>
+    /// <remarks>
+    /// Uses an epsilon of 1e-12 to detect duplicate points. This prevents
+    /// degenerate polygon edges that could arise from floating-point imprecision
+    /// during intersection calculations.
+    /// </remarks>
+    /// <param name="list">The list to add the point to.</param>
+    /// <param name="p">The point to add.</param>
     private static void AddIfNotDuplicate(List<Point2<double>> list, Point2<double> p)
     {
         if (list.Count == 0)
