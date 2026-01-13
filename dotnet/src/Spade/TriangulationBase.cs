@@ -145,9 +145,9 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
         // For bulk operations, we can optimize the hint generator by:
         // 1. Using a more spatially-aware hint when we have multiple vertices
         // 2. Caching the centroid of existing vertices for better initial hints
-        
+
         if (NumVertices == 0) return;
-        
+
         // If we have a LastUsedVertexHintGenerator, we can optimize it for bulk operations
         if (_hintGenerator is LastUsedVertexHintGenerator<double> lastUsedGenerator)
         {
@@ -160,14 +160,14 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
                 lastUsedGenerator.NotifyVertexLookup(centerVertex.Value);
             }
         }
-        
+
         // Additional optimizations could include:
         // - Pre-computing spatial partitions for very large bulk operations
         // - Using different hinting strategies based on the spatial distribution
         // - Caching spatial locality information between insertions
         // For now, the central vertex optimization provides a good balance of simplicity and effectiveness
     }
-    
+
     /// <summary>
     /// Finds a vertex that is approximately central to the existing triangulation.
     /// This provides a good starting hint for bulk insertion operations.
@@ -177,12 +177,12 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
     {
         if (NumVertices == 0) return null;
         if (NumVertices == 1) return new FixedVertexHandle(0);
-        
+
         // Calculate the centroid of all vertices
         var sumX = 0.0;
         var sumY = 0.0;
         var count = 0;
-        
+
         for (int i = 0; i < NumVertices; i++)
         {
             var vertex = Vertex(new FixedVertexHandle(i));
@@ -191,28 +191,28 @@ public abstract class TriangulationBase<V, DE, UE, F, L>
             sumY += pos.Y;
             count++;
         }
-        
+
         if (count == 0) return null;
-        
+
         var centroid = new Point2<double>(sumX / count, sumY / count);
-        
+
         // Find the vertex closest to the centroid
         var closestVertex = new FixedVertexHandle(0);
         var closestDistance = double.MaxValue;
-        
+
         for (int i = 0; i < NumVertices; i++)
         {
             var vertex = Vertex(new FixedVertexHandle(i));
             var pos = vertex.Data.Position;
             var distance = (pos.Sub(centroid)).Length2(); // Use squared distance to avoid sqrt
-            
+
             if (distance < closestDistance)
             {
                 closestDistance = distance;
                 closestVertex = new FixedVertexHandle(i);
             }
         }
-        
+
         return closestVertex;
     }
 

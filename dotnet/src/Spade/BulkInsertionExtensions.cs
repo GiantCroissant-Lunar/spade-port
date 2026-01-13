@@ -28,7 +28,7 @@ public static class BulkInsertionExtensions
         where L : IHintGenerator<double>, new()
     {
         if (triangulation == null) throw new ArgumentNullException(nameof(triangulation));
-        
+
         // Handle empty span edge case
         if (points.IsEmpty) return;
 
@@ -41,15 +41,15 @@ public static class BulkInsertionExtensions
             // Use ArrayPool to avoid allocations for temporary sorting array
             var pool = ArrayPool<Point2<double>>.Shared;
             var sortableArray = pool.Rent(points.Length);
-            
+
             try
             {
                 // Copy span to rented array
                 points.CopyTo(sortableArray.AsSpan(0, points.Length));
-                
+
                 // Create a span over the used portion of the rented array
                 var sortableSpan = sortableArray.AsSpan(0, points.Length);
-                
+
                 // Use in-place stable sort by X then Y coordinates
                 sortableSpan.Sort((a, b) =>
                 {
@@ -97,7 +97,7 @@ public static class BulkInsertionExtensions
         where L : IHintGenerator<double>, new()
     {
         if (triangulation == null) throw new ArgumentNullException(nameof(triangulation));
-        
+
         // Handle empty span edge case
         if (vertices.IsEmpty) return;
 
@@ -110,15 +110,15 @@ public static class BulkInsertionExtensions
             // Use ArrayPool to avoid allocations for temporary sorting array
             var pool = ArrayPool<V>.Shared;
             var sortableArray = pool.Rent(vertices.Length);
-            
+
             try
             {
                 // Copy span to rented array
                 vertices.CopyTo(sortableArray.AsSpan(0, vertices.Length));
-                
+
                 // Create a span over the used portion of the rented array
                 var sortableSpan = sortableArray.AsSpan(0, vertices.Length);
-                
+
                 // Use in-place stable sort by X then Y coordinates
                 sortableSpan.Sort((a, b) =>
                 {
@@ -169,7 +169,7 @@ public static class BulkInsertionExtensions
         if (vertices == null) throw new ArgumentNullException(nameof(vertices));
 
         var list = vertices as IList<V> ?? vertices.ToList();
-        
+
         // Handle empty collection edge case
         if (list.Count == 0) return;
 
@@ -182,7 +182,7 @@ public static class BulkInsertionExtensions
             // Use ArrayPool for allocation-efficient sorting instead of LINQ
             var pool = ArrayPool<V>.Shared;
             var sortableArray = pool.Rent(list.Count);
-            
+
             try
             {
                 // Copy list to rented array
@@ -201,10 +201,10 @@ public static class BulkInsertionExtensions
                         sortableArray[index++] = item;
                     }
                 }
-                
+
                 // Create a span over the used portion of the rented array
                 var sortableSpan = sortableArray.AsSpan(0, list.Count);
-                
+
                 // Use in-place stable sort by X then Y coordinates
                 sortableSpan.Sort((a, b) =>
                 {
