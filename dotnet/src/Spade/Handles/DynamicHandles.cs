@@ -96,8 +96,8 @@ public readonly struct DirectedEdgeHandle<V, DE, UE, F>
 
     public LineSideInfo SideQuery(Point2<double> position)
     {
-        var p1 = ((IHasPosition<double>)From().Data).Position;
-        var p2 = ((IHasPosition<double>)To().Data).Position;
+        var p1 = ((IHasPosition<double>)From().Data!).Position;
+        var p2 = ((IHasPosition<double>)To().Data!).Position;
         return MathUtils.SideQuery(p1, p2, position);
     }
 
@@ -145,9 +145,9 @@ public readonly struct FaceHandle<V, DE, UE, F>
     public Point2<double> Circumcenter()
     {
         var edge = AdjacentEdge() ?? throw new InvalidOperationException("Face has no adjacent edge");
-        var v0 = ((IHasPosition<double>)edge.From().Data).Position;
-        var v1 = ((IHasPosition<double>)edge.To().Data).Position;
-        var v2 = ((IHasPosition<double>)edge.Next().To().Data).Position;
+        var v0 = ((IHasPosition<double>)edge.From().Data!).Position;
+        var v1 = ((IHasPosition<double>)edge.To().Data!).Position;
+        var v2 = ((IHasPosition<double>)edge.Next().To().Data!).Position;
 
         return MathUtils.Circumcenter(v0, v1, v2);
     }

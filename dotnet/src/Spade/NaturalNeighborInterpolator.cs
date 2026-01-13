@@ -56,7 +56,7 @@ public sealed class NaturalNeighborInterpolator<V, DE, UE, F, L>
         if (selector == null) throw new ArgumentNullException(nameof(selector));
 
         _weightBuffer.Clear();
-        PositionInTriangulation location = null;
+        PositionInTriangulation? location = null;
         try
         {
             location = GetWeightsInternal(position, _weightBuffer);
@@ -107,7 +107,7 @@ public sealed class NaturalNeighborInterpolator<V, DE, UE, F, L>
         if (gradient == null) throw new ArgumentNullException(nameof(gradient));
 
         _weightBuffer.Clear();
-        PositionInTriangulation location = null;
+        PositionInTriangulation? location = null;
         try
         {
             location = GetWeightsInternal(position, _weightBuffer);
@@ -297,7 +297,7 @@ public sealed class NaturalNeighborInterpolator<V, DE, UE, F, L>
     private double? GetBarycentricFallback(
         Point2<double> position,
         Func<VertexHandle<V, DE, UE, F>, double> selector,
-        PositionInTriangulation knownLocation = null)
+        PositionInTriangulation? knownLocation = null)
     {
         // Check Bounding Box
         double minX = double.MaxValue, minY = double.MaxValue;
